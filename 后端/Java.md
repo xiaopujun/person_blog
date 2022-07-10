@@ -15,7 +15,7 @@
 
 ```java
 public class Demo06 {
-    public void hello(){
+    public void hello() {
         int a = 0;
         System.out.println(a);
     }
@@ -30,8 +30,9 @@ public class Demo06 {
 public class Demo06 {
     int a;
     String b;
+
     public static void main(String[] args) {
-        
+
     }
 }
 ```
@@ -171,8 +172,8 @@ Java的引用数据类型指的是，类、接口、数组这三种类型。引�
 | ^      | 按位异或操作符，两个操作数的某一位不相同时候结果的该位就为1。 |
 | 〜     | 按位补运算符翻转操作数的每一位。                             |
 | <<     | 按位左移运算符。左操作数按位左移右操作数指定的位数。左移一位相当于乘以2 |
-| >>     | 按位右移运算符。左操作数按位右移右操作数指定的位数。右移一位相当于除以2 |
-| >>>    | 按位右移补零操作符。左操作数的值按右操作数指定的位数右移，移动得到的空位以零填充。 |
+| > >     | 按位右移运算符。左操作数按位右移右操作数指定的位数。右移一位相当于除以2 |
+| > > >    | 按位右移补零操作符。左操作数的值按右操作数指定的位数右移，移动得到的空位以零填充。 |
 
 ### 字符串连接符
 
@@ -328,8 +329,7 @@ class Student{
 
 上面的代码我们做了一个实验，创建了一个学生类，重写了他的构造器，我们在构造器中打印了this关键字，并在main方法中打印了通过new创建出来的实例对象，看看这个this关键字和通过new出来的实例对象的引用liming，他们是不是指向同一个实例。
 
-test_startic.Student@4554617c
-test_startic.Student@4554617c
+test_startic.Student@4554617c test_startic.Student@4554617c
 
 通过控制台的打印，我们看出来，他们的地址实际上是一摸一样的。也就是说，this关键字，指向的东西，就是new出来的那个对象。他们两个是同一个东西两种不同存在形式。
 
@@ -339,7 +339,8 @@ test_startic.Student@4554617c
 
 当类拥有一个继承体系的时候，会先初始化基类，其次再初始化子类。
 
-静态[代码](http://www.so.com/s?q=代码&ie=utf-8&src=internal_wenda_recommend_textn)块，在[虚拟机](http://www.so.com/s?q=虚拟机&ie=utf-8&src=internal_wenda_recommend_textn)加载类的时候就会加载执行，而且只执行一次;
+静态[代码](http://www.so.com/s?q=代码&ie=utf-8&src=internal_wenda_recommend_textn)块，在[虚拟机](http://www.so.com/s?q=虚拟机&ie=utf-8&src=internal_wenda_recommend_textn)加载类的时候就会加载执行，而且只执行一次
+;
 
 ```java
 public class Demo01 {
@@ -385,7 +386,8 @@ public class Demo01 {
 
 equals 本质上就是 ==，只不过 String 和 Integer 等重写了 equals 方法，把它变成了值比较。
 
-**总结** ：== 对于基本类型来说是值比较，对于引用类型来说是比较的是引用；而 equals 默认情况下是引用比较，只是很多类重新了 equals 方法，比如 String、Integer 等把它变成了值比较，所以一般情况下 equals 比较的是值是否相等。
+**总结** ：== 对于基本类型来说是值比较，对于引用类型来说是比较的是引用；而 equals 默认情况下是引用比较，只是很多类重新了 equals 方法，比如 String、Integer 等把它变成了值比较，所以一般情况下
+equals 比较的是值是否相等。
 
 # return的作用：
 
@@ -404,8 +406,6 @@ java使用16位的双字节存储，但是在实际文件存储的过程中数�
 | US-ASCII   | 即英文的ASCII编码                        |
 | IOS-8859-1 | 拉丁文、包含中文、日文等                 |
 | UTF-8      | 边长的unicode字符（1-3个字节），国际通用 |
-
-
 
 ##### 编码: 字符串-->字节
 
@@ -473,7 +473,8 @@ Java中一切都是对象，而对象源自于类型，也就是类。而将类�
 
 如上代码，StoryBook是新的类型，但是他是从原有的Book类型中扩展而来的。
 
-我们都知道，一个类中的字段或着参数是基本类型的时候，会自动初始化为**零**，但是对象类型的引用数据类型会被初始化为null，这个时候，如果你想用这个引用类型的字段调用它其中的方法，那一定会报空指针异常的错误，因为这个引用没有指向任何一个实际的对象。
+我们都知道，一个类中的字段或着参数是基本类型的时候，会自动初始化为**零**
+，但是对象类型的引用数据类型会被初始化为null，这个时候，如果你想用这个引用类型的字段调用它其中的方法，那一定会报空指针异常的错误，因为这个引用没有指向任何一个实际的对象。
 
 ## 组合语法
 
@@ -596,9 +597,7 @@ public class Cartoon extends Drawing{
 
 如上代码，其结果为：
 
-第一代
-第二代
-第三代
+第一代 第二代 第三代
 
 从结果中明显可以看出，对于存在继承的类，他们的构建过程是从基类向外扩散的。所以在子类可以访问父类之前，父类（基类）就已经完成了初始化。
 
@@ -800,7 +799,7 @@ public final class FinalTest {
 }
 ```
 
-##  final方法
+## final方法
 
 final方法无法被重写，但是可以重载。
 
@@ -810,9 +809,10 @@ final方法无法被重写，但是可以重载。
 
 类中所有的private方法默认情况下都是final级别的，也就是无法被继承，因为private关键字将方法的权限限定在了当前类中，其他类是无法直接访问这个方法的。
 
-这里有一点容易造成疑惑，那就是即使private方法是fianl级别的，表示它无法别继承，但是如果我们继承这个类，我们发现，在子类中**似乎**仍然可以覆盖这个方法，注意这里其实并不是覆盖，而只是在子类中创建了一个和父类有着相同名字和参数列表的方法。它并不是从父类中继承而来的。
+这里有一点容易造成疑惑，那就是即使private方法是fianl级别的，表示它无法别继承，但是如果我们继承这个类，我们发现，在子类中**似乎**
+仍然可以覆盖这个方法，注意这里其实并不是覆盖，而只是在子类中创建了一个和父类有着相同名字和参数列表的方法。它并不是从父类中继承而来的。
 
-覆盖只有某一个方法是父类接口的一部分时才能称之为覆盖，也就是说，如果子类继承了父类，那么在创建对象的时候能够向上转型并且调用到父类的原始方法。但是很明显，在子类中是绝对无法调用到父类中的private方法的 
+覆盖只有某一个方法是父类接口的一部分时才能称之为覆盖，也就是说，如果子类继承了父类，那么在创建对象的时候能够向上转型并且调用到父类的原始方法。但是很明显，在子类中是绝对无法调用到父类中的private方法的
 
 ## final数据
 
@@ -866,13 +866,12 @@ public static final double PAI = random.nextDouble();
 - 多态的存在有3个必要的条件：继承、方法重写、父类引用指向子类对象
 - 用父类引用指向子类对象后，用该父类引用调用子类重写的方法，此时就出现了多态。
 
-
-
 # super关键字
 
 super是直接父类对象的引用，可以通过super来访问父类中被子类覆盖的方法或属性。
 
-super在类的构造器中也有着特殊的作用，我们需要记住这么一句话，在类的构造器中，第一个语句始终时super()调用直接父类的构造器，这样层层向上追溯继承树，直到追溯到根类中，然后再层层初始化到当前类，不管这个构造器是否是带参数的，若是默认构造器，即使我们不手动显示的调用super，那么jvm也会自动隐式的为我们加上这个调用。（super永远位于构造器的第一句）
+super在类的构造器中也有着特殊的作用，我们需要记住这么一句话，在类的构造器中，第一个语句始终时super()
+调用直接父类的构造器，这样层层向上追溯继承树，直到追溯到根类中，然后再层层初始化到当前类，不管这个构造器是否是带参数的，若是默认构造器，即使我们不手动显示的调用super，那么jvm也会自动隐式的为我们加上这个调用。（super永远位于构造器的第一句）
 
 # 参数传值机制
 
@@ -963,7 +962,7 @@ public interface  Demo01 {
 接口有以下特点
 
 - 支持多实现
-- 接口中的属性只能是常量  public static final
+- 接口中的属性只能是常量 public static final
 - 接口中的方法只能是抽象方法
 - 实现了接口的类必须实现接口的方法
 - 接口支持多继承
@@ -1058,7 +1057,7 @@ class Demo02{
 特点：
 
 - 当静态内部类对象存在时，不一定外部类的对象存在，因为静态内部类不依托于外部类，因此静态内部类的方法不能直接访问外部类的方法
-- 静态内部类看作一个外部类的静态成员，因此外部类的方法可以通过：静态内部类.名字   的方式访问静态内部类的静态成员。通过new静态内部类访问静态内部类的实例
+- 静态内部类看作一个外部类的静态成员，因此外部类的方法可以通过：静态内部类.名字 的方式访问静态内部类的静态成员。通过new静态内部类访问静态内部类的实例
 
 ### 匿名内部类
 
@@ -1226,7 +1225,7 @@ public class User {
 
 ![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-当然你也可以在返回值类型上使用泛型 
+当然你也可以在返回值类型上使用泛型
 
 ```java
 private <T> T  test(T a){
@@ -1237,7 +1236,7 @@ private <T> T  test(T a){
 
 ![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
- 如上这个代码，我们就定义了一个泛型方法，那么这个泛型方法的类型也就是在调用test方法的时候，由传进来的这个参数a确定，传进来的这个a是什么类型，那么这个方法的泛型就是具体是什么类型。
+如上这个代码，我们就定义了一个泛型方法，那么这个泛型方法的类型也就是在调用test方法的时候，由传进来的这个参数a确定，传进来的这个a是什么类型，那么这个方法的泛型就是具体是什么类型。
 
 当然，因为是调用方法的时候确定的类型，所以这种自定义方法的泛型也是可以在静态方法中使用的。
 
@@ -1414,7 +1413,7 @@ public class Demo01 {
         list.add("liqingzhao");
 
         Iterator iterator = list.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Object next = iterator.next();
             System.out.println(next);
         }
@@ -1425,7 +1424,7 @@ public class Demo01 {
 
 遍历Set和List的用法一样。
 
-### 遍历Map  
+### 遍历Map
 
 第一种：
 
@@ -1495,7 +1494,7 @@ public class Demo01 {
 - fill(List<? super T> list, T obj)：用指定的对象，重构整个List
 - binarySearch(List<? extends Comparable<? super T>> list, T key)：使用二分查找指定算法
 
-# Java:I/O系统 
+# Java:I/O系统
 
 ## 5个类，3个接口
 
@@ -1510,9 +1509,9 @@ public class Demo01 {
 | Flushable    | 刷新流接口 |
 | Serializable | 序列化接口 |
 
-建议使用的路径方式：I/IDEA_project2/demo/test.java     使用正斜杠的方式
+建议使用的路径方式：I/IDEA_project2/demo/test.java 使用正斜杠的方式
 
-File的三种状态：1.文件  2.文件夹    3.不存在
+File的三种状态：1.文件 2.文件夹 3.不存在
 
 ## 相对路径和绝对路径：
 
@@ -1541,8 +1540,8 @@ File的三种状态：1.文件  2.文件夹    3.不存在
 
 ##### 文件状态：
 
-1.  exists：判断是否存在
-2.  若存在的通过isFile判断是否是文件，通过isDirectory判断是否是文件夹（目录）
+1. exists：判断是否存在
+2. 若存在的通过isFile判断是否是文件，通过isDirectory判断是否是文件夹（目录）
 
 ##### 文件大小：
 
@@ -1632,7 +1631,7 @@ public class demo02 {
 | 方法                               | 说明                                                         |
 | ---------------------------------- | ------------------------------------------------------------ |
 | write(byte[] b)                    | 将字节数组b大小的字节全部写入文件输出流                      |
-| write(byte[] b,  int off, int len) | 将 `len`字节从指定的字节数组开始，从偏移量 `off`开始写入此文件输出流。 |
+| write(byte[] b, int off, int len) | 将 `len`字节从指定的字节数组开始，从偏移量 `off`开始写入此文件输出流。 |
 | write(int b)                       | 将指定的字节写入此文件输出流。                               |
 
 ##### FileReader（字符流）
@@ -1645,7 +1644,7 @@ public class demo02 {
 | ------------------------------------ | ---------------------------- |
 | read()                               | 读取一个字符                 |
 | read(char[] cbuf)                    | 将字符读如数组               |
-| read(char[] cbuf,  int off, int len) | 从指定位置读取指定长度的字符 |
+| read(char[] cbuf, int off, int len) | 从指定位置读取指定长度的字符 |
 
 ##### FileWriter（字符流）
 
@@ -1656,10 +1655,10 @@ public class demo02 {
 | 方法                                  | 说明                       |
 | ------------------------------------- | -------------------------- |
 | write(String str)                     | 写一个字符串               |
-| write(String str,  int off, int len)  | 写一个字符串的一部分       |
+| write(String str, int off, int len)  | 写一个字符串的一部分       |
 | write(int c)                          | 写一个字符                 |
 | write(char[] cbuf)                    | 写一个字符数组             |
-| write(char[] cbuf,  int off, int len) | 写一个字符数组的一部分     |
+| write(char[] cbuf, int off, int len) | 写一个字符数组的一部分     |
 | append(CharSequence csq)              | 将字符序列追加到指定目标后 |
 
 #### 内存中
@@ -1675,7 +1674,7 @@ public class demo02 {
 | 方法                              | 说明               |
 | --------------------------------- | ------------------ |
 | read()                            | 读取一个字节数据   |
-| read(byte[] b,  int off, int len) | 读取指定长度的数据 |
+| read(byte[] b, int off, int len) | 读取指定长度的数据 |
 
 ##### ByteArrayOutputStream（字节流）
 
@@ -1685,7 +1684,7 @@ public class demo02 {
 
 | 方法                               | 说明               |
 | ---------------------------------- | ------------------ |
-| write(byte[] b,  int off, int len) | 写指定长度的数据   |
+| write(byte[] b, int off, int len) | 写指定长度的数据   |
 | write()                            | 写指定的字节的数据 |
 | toByteArray()                      | 获取写到内存的数据 |
 
@@ -1738,7 +1737,7 @@ BufferedOutputStream(OutputStream out)
 
 使用方法参照jdk文档，基本和上面的使用方法一致。
 
-####  InputStreamReader
+#### InputStreamReader
 
 字节流到字符流的转换桥梁，将指定的文件中的字节还原为字符，相当于解码操作，前提是文件中的数据能够转为字节，如音频视频等则无法完成此操作。
 
@@ -1758,7 +1757,7 @@ BufferedOutputStream(OutputStream out)
 | ------ | ------------------------------------ | ------------------------------------------------------------ |
 | `void` | `flush()`                            | 刷新此数据输出流。                                           |
 | `int`  | `size()`                             | 返回计数器的当前值 `written` ，到目前为止写入此数据输出流的字节数。 |
-| `void` | `write(byte[] b,  int off, int len)` | 将从偏移量 `off`开始的指定字节数组写入 `len`字节到底层输出流。 |
+| `void` | `write(byte[] b, int off, int len)` | 将从偏移量 `off`开始的指定字节数组写入 `len`字节到底层输出流。 |
 | `void` | `write(int b)`                       | 将指定的字节（参数 `b`的低8位）写入底层输出流。              |
 | `void` | `writeBoolean(boolean v)`            | 将底层输出流写入 `boolean`作为1字节值。                      |
 | `void` | `writeByte(int v)`                   | 将底层输出流作为1字节值写入 `byte` 。                        |
@@ -1779,14 +1778,14 @@ BufferedOutputStream(OutputStream out)
 | 返回值          | 方法                                     | 描述                                                         |
 | --------------- | ---------------------------------------- | ------------------------------------------------------------ |
 | `int`           | `read(byte[] b)`                         | 从包含的输入流中读取一些字节数，并将它们存储到缓冲器阵列 `b` 。 |
-| `int`           | `read(byte[] b,  int off, int len)`      | 从包含的输入流读取最多 `len`个字节的数据到字节数组。         |
+| `int`           | `read(byte[] b, int off, int len)`      | 从包含的输入流读取最多 `len`个字节的数据到字节数组。         |
 | `boolean`       | `readBoolean()`                          | 见 `readBoolean`方法 `DataInput`的一般合同。                 |
 | `byte`          | `readByte()`                             | 见 `readByte`方法 `DataInput`的一般合同。                    |
 | `char`          | `readChar()`                             | 见 `readChar`法 `DataInput`的一般合同。                      |
 | `double`        | `readDouble()`                           | 见 `readDouble`方法的一般合同 `DataInput` 。                 |
 | `float`         | `readFloat()`                            | 见 `readFloat`法 `DataInput`的一般合同。                     |
 | `void`          | `readFully(byte[] b)`                    | 见 `readFully`法 `DataInput`的一般合同。                     |
-| `void`          | `readFully(byte[] b,  int off, int len)` | 见 `readFully`法 `DataInput`的一般合同。                     |
+| `void`          | `readFully(byte[] b, int off, int len)` | 见 `readFully`法 `DataInput`的一般合同。                     |
 | `int`           | `readInt()`                              | 见 `readInt`法 `DataInput`的一般合同。                       |
 | `long`          | `readLong()`                             | 见 `readLong`方法 `DataInput`的一般合同。                    |
 | `short`         | `readShort()`                            | 见 `readShort`法 `DataInput`的一般合同。                     |
@@ -1806,7 +1805,7 @@ BufferedOutputStream(OutputStream out)
 
 #### ObjectOutputStream
 
-对象写出流，用法同上面数据写出流，新增方法，对象写出 
+对象写出流，用法同上面数据写出流，新增方法，对象写出
 
 #### ObjectInputStream
 
@@ -1838,16 +1837,16 @@ public class Test15 {
 
 ### 打印流
 
-- PrintStream  
-- PrintWriter 
+- PrintStream
+- PrintWriter
 
 打印流的特点：
 
--  不负责数据源，只负责数据目的
--  为其他输出流，添加功能
--  永远不会抛出IO异常，但是可能抛出别的异常
+- 不负责数据源，只负责数据目的
+- 为其他输出流，添加功能
+- 永远不会抛出IO异常，但是可能抛出别的异常
 
-#### PrintStream 
+#### PrintStream
 
 平时用的System.out.println();就是属于这个流；
 
@@ -1882,14 +1881,14 @@ printWriter和printStream相比在于它多了一个可以接收字节输出流�
 
 ### 随机流
 
-#### RandomAccessFile 
+#### RandomAccessFile
 
 该类可以同时支持读取和写出操作
 
 | 构造方法                                      | 描述                                                         |
 | --------------------------------------------- | ------------------------------------------------------------ |
 | `RandomAccessFile(File file, String mode)`    | 创建一个随机访问文件流，从[`File`](../../java/io/File.html)参数指定的文件读取，并可选地写入。 |
-| `RandomAccessFile(String name,  String mode)` | 创建随机访问文件流，以从中指定名称的文件读取，并可选择写入文件。 |
+| `RandomAccessFile(String name, String mode)` | 创建随机访问文件流，以从中指定名称的文件读取，并可选择写入文件。 |
 
 从构造方法中，可以看出，第二个参数为mode，这里就是指定其为读（r）模式还是读写（rw）模式的地方。
 
@@ -1913,872 +1912,6 @@ this关键字和static关键字是不能同时存在来修饰同一个内容的�
 
 静态的方法和量与实例对象的关系就像是图纸和实际产品的关系，有产品则一定有图纸，反之则不一定成立。静态的方法和变量以及常量都是从属于类的，在方法区中，是图纸。而实例对象则是按照方法区里的类模板造出来的，属于实际产品。
 
-# Java多线程
-
-多线程是Java语言的天生优势，Java在语言上就支持多线程开发。
-
-简单说明一下程序、进程、线程之间的关系
-
-## 程序、进程与线程
-
-1. 程序：实际上，在我们的电脑上使用的各种软件就是程序，QQ、LOL，开发工具idea，这些统统都叫程序
-2. 进程：当上面说的程序真正运行起来的时候，程序就变成了电脑上的进程。我们可以通过任务管理器查看到
-3. 线程：一个程序中包含多个线程，比如一个视频播放器在运行的时候同时调用了视频节码和声卡，他们两个都在一起运行，这就是线程的功劳。又比如说，在浏览器中打开了多个网页，这时候其实一个网页就是一个线程。
-
-Java中默认情况下是有线程存在的，当运行Java程序的时候，main函数执行的其实就是一个线程，叫做主线程，其次如果垃圾回收器运行了，那么还会有gcc线程。
-
-## 线程的创建
-
-### 创建方式
-
-1. 继承Thread类（重点）
-2. 实现Runnable接口（重点）
-3. 实现Callable接口
-
-### 使用继承Thread类的方式创建线程
-
-使用继承Thread类的方式首先应该继承Thread类，然后覆盖父类的run方法。run方法中就是你的逻辑代码，其次，如果需要开启这个线程，那么应该创建当前类的对象，并调用start()方法，记住是start方法而不是run方法。调用run方法并不会开启线程，而是只会想单线程一样执行代码逻辑。
-
-一下代码运行后，会同时启动两个线程，一个主线程，一个就是因为调用了start方法而开启的子线程，在控制台中打印的时候会出现交替执行的现象。但是我们无法人为控制那个先执行，那个后执行。调度任务交给CPU来完成。
-
-```java
-public class MyThread extends Thread {
-
-    @Override
-    public void run() {
-        for (int i = 0; i < 100; i++) {
-            System.out.println("我在看代码");
-        }
-    }
-
-    public static void main(String[] args) {
-        MyThread myThread = new MyThread();
-        myThread.start();
-        for (int i = 0; i < 100; i++) {
-            System.out.println("我在----主----线程");
-        }
-    }
-}
-```
-
-### 使用实现Runnable接口的方式创建线程
-
-使用实现Runnable接口的方式，也需要实现run方法，并且把逻辑代码写到run方法内部。但是在启动线程的时候会有所不同，这里仍然需要创建Thread类的对象，然后将实现了Runnable接口的类对象作为参数放入创建Thread类的构造器方法中。最后通过Thread类的对象来启动线程。
-
-```java
-public class MyRannable1 implements Runnable {
-
-    @Override
-    public void run() {
-        for (int i = 0; i < 100; i++) {
-            System.out.println("子线程跑===-=-==-="+i);
-        }
-
-    }
-
-    public static void main(String[] args) {
-        MyRannable1 myRannable1 = new MyRannable1();
-        //仍然使用thread类对象启动线程
-        new Thread(myRannable1).start();
-        for (int i = 0; i < 1000; i++) {
-            System.out.println("主线程"+i);
-        }
-    }
-}
-```
-
-这两种方法中推荐使用Runnable接口的方式。原因在于，使用Runnable接口可以很轻松的让多个线程操作同一份资源，但是在Thread类中实现起来会比较复杂。
-
-### 使用实现Callable接口创建多线程
-
-使用callable有几个好处，1.能获取结果  2.会获取异常
-
-使用callable接口时，主要分为四个步骤
-
-- 创建执行服务
-- 提交执行
-- 获取结果
-- 关闭资源
-
-```java
-public class MyCallable implements Callable<Boolean> {
-
-    String name;
-    MyCallable(String name){
-        this.name = name;
-    }
-
-    @Override
-    public Boolean call() throws Exception {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(name);
-            Thread.sleep(300);
-        }
-        return true;
-    }
-
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        MyCallable t1 = new MyCallable("张三");
-        MyCallable t2 = new MyCallable("里斯");
-        MyCallable t3 = new MyCallable("轨道");
-
-        //创建执行服务
-        ExecutorService threadPool = Executors.newFixedThreadPool(3);
-        //提交执行
-        Future<Boolean> res1 = threadPool.submit(t1);
-        Future<Boolean> res2 = threadPool.submit(t2);
-        Future<Boolean> res3 = threadPool.submit(t3);
-        //获取结果
-        Boolean aBoolean1 = res1.get();
-        Boolean aBoolean2 = res2.get();
-        Boolean aBoolean3 = res3.get();
-        //关闭服务
-        threadPool.shutdown();
-
-    }
-
-}
-```
-
-## 线程的状态
-
-- 创建状态：当new一个Thread对象的时候，线程就被创建了
-- 就绪状态：当调用了start()方法之后，线程就进入了就绪状态，此时需要CPU分配资源才能进入运行状态
-- 运行状态：处于就绪状态的线程得到了CPU的资源
-- 阻塞状态：等待用户输入等情况，比如让线程睡眠
-- 死亡状态：线程执行完毕，或者以外退出了
-
-![](C:\Users\xiaopu\AppData\Roaming\Typora\typora-user-images\image-20200209104907512.png)
-
-## 线程常用方法
-
-| 方法             | 描述                                       |
-| ---------------- | ------------------------------------------ |
-| setPriority(int) | 更改线程优先级                             |
-| sleep(long)      | 让当前线程休眠指定秒数                     |
-| join()           | 等待该线程停止                             |
-| yield()          | 停止当前正在执行的线程对象，并执行其他线程 |
-| interrupt()      | 中断线程                                   |
-| isAlive()        | 测试线程是否处于活动状态                   |
-
-## 线程的停止
-
-不推荐使用jdk提供的stop()、destory()等方法【已废弃】
-
-如果能让线程正常的走完生命周期是最理想的停止方式，如果是需要手动停止的话，最好使用标志位的方式来停止，也就是设置一个flag，当为某一种方式的时候就停止线程。
-
-使用标识位停止线程需要注意两个要点
-
-1. 设立一个标识位，一般可以用Boolean类型
-2. 提供一个外部方法，用来改变标志位，让线程在指定的位置停止
-
-如下展示使用标志位停止线程的方式
-
-```java
-public class StopThreadTest implements Runnable {
-
-    /**
-     * 设立一个标志位
-     */
-    private boolean flag = true;
-
-    /**
-     * 提供一个外部方法改变标识位
-     */
-    public void stop(){
-        this.flag = false;
-    }
-
-    @Override
-    public void run() {
-        while (flag){
-            System.out.println("子线程===");
-        }
-    }
-
-
-    public static void main(String[] args) {
-        StopThreadTest threadTest = new StopThreadTest();
-        new Thread(threadTest).start();
-
-        for (int i = 0; i < 100; i++) {
-            System.out.println("===主线程=="+i);
-            if (i == 90){
-                threadTest.stop();
-                System.out.println("子线程停止");
-            }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
-```
-
-## 线程的休眠
-
-让线程休眠最常用的方法就是使用Thread.sleep()方法。sleep时间到达之后，线程就又会进入就绪状态，等待CPU分配资源。
-
-每一个对象都有一把锁，sleep不会释放锁
-
-## 线程礼让(yield()方法)
-
-礼让线程，就是让当前正在执行的线程暂停，但不阻塞，当前线程从运行状态转为就绪状态，所有的线程重回统一起跑线，让CPU重新分配资源。
-
-注意：礼让线程不一定成功，因为都是统一起跑线，所以原来礼让的线程可能又再次获得资源进入运行状态。完全取决于CPU的调度
-
-比如说，A、B两个线程，A处于运行，B处于就绪。现在A礼让线程，两者都回到就绪状态。此时CPU重新分配资源，可能还是A得到资源进入运行，这时就礼让失败了。如果B此时得到资源，那么B就进入了运行。此时礼让成功。
-
-如下代码演示了线程礼让（主要就是礼让方法的演示）
-
-```java
-public class ThreadYield implements Runnable {
-    @Override
-    public void run() {
-        System.out.println(Thread.currentThread().getName()+"开始");
-        //线程礼让
-        Thread.yield();
-        System.out.println(Thread.currentThread().getName()+"结束");
-    }
-
-    public static void main(String[] args) {
-        ThreadYield threadYield = new ThreadYield();
-        new Thread(threadYield,"a").start();
-        new Thread(threadYield,"b").start();
-    }
-}
-```
-
-## 线程强制执行（join()方法）
-
-Join合并线程，只能当插入进来的这个线程执行完毕后其他线程才能执行。和插队一个原理。
-
-```java
-public class ThreadJoin implements Runnable {
-    @Override
-    public void run() {
-        for (int i = 0; i < 100; i++) {
-            System.out.println("*心*悦*会*员*来*了，通*通*闪*开*"+i);
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        ThreadJoin threadJoin = new ThreadJoin();
-        Thread thread = new Thread(threadJoin);
-        thread.start();
-        for (int i = 0; i < 200; i++) {
-            if (i==100){
-                thread.join();
-            }
-            System.out.println("主线程默默执行"+i);
-        }
-    }
-}
-```
-
-## 线程的状态判断
-
-Java代码中可以使用以下常量判断线程状态
-
-| 常量          | 描述                                                       |
-| ------------- | ---------------------------------------------------------- |
-| NEW           | 线程处于新生状态                                           |
-| RUNNABLE      | 处于运行状态                                               |
-| BLOCKED       | 被阻塞等待监视器锁定的线程处于此状态。                     |
-| WAITING       | 正在等待另一个线程执行特定动作的线程处于此状态             |
-| TIMED_WAITING | 正在等待另一个线程执行动作达到指定等待时间的线程处于此状态 |
-| TERMINATED    | 已退出的线程处于此状态                                     |
-
-注意：线程一旦执行完了就不能再次启动。
-
-以下代码可判断线程状态
-
-``` java
-public class ThreadState implements Runnable{
-    @Override
-    public void run() {
-        try {
-            Thread.sleep(1000);
-            System.out.println("嘿嘿");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        ThreadState threadState = new ThreadState();
-        //线程创建
-        Thread thread = new Thread(threadState);
-        Thread.State state = thread.getState();
-        System.out.println(state);
-
-        //线程开始执行
-        thread.start();
-        state = thread.getState();
-        System.out.println(state);
-
-        while (state != Thread.State.TERMINATED){
-            Thread.sleep(100);
-            state = thread.getState();
-            System.out.println(state);
-        }
-    }
-}
-```
-
-## 线程的优先级
-
-线程的优先级用数字表示，范围1~10。优先级高的线程自然容易优先执行。注意：这里说的是容易，所以并不是优先级高的就一定优先执行，有时候并不是这样的。只是优先级高就更加容易先执行。
-
-使用下面两种方法获取或者改变优先级
-
-- getPriority() : 获得当前线程的优先级
-- setPriority(int) ：设置线程的优先级
-
-如下代码演示了线程优先级的启动，记住一点，线程的优先级一定是要先设置，再启动，否则无效。
-
-```java
-public class ThreadPriority implements Runnable{
-    @Override
-    public void run() {
-        System.out.println(Thread.currentThread().getName()+"启动——>"+Thread.currentThread().getPriority());
-    }
-
-    public static void main(String[] args) {
-        ThreadPriority threadPriority = new ThreadPriority();
-        Thread t1 = new Thread(threadPriority,"线程1");
-        Thread t2 = new Thread(threadPriority,"线程2");
-        Thread t3 = new Thread(threadPriority,"线程3");
-        Thread t4 = new Thread(threadPriority,"线程4");
-
-        System.out.println(Thread.currentThread().getName()+"启动——>"+Thread.currentThread().getPriority());
-
-        t1.setPriority(2);
-        t1.start();
-
-        t2.setPriority(Thread.MAX_PRIORITY);
-        t2.start();
-
-        t3.setPriority(6);
-        t3.start();
-
-        t4.setPriority(8);
-        t4.start();
-    }
-}
-```
-
-## 守护线程
-
-线程分为用户线程和守护线程，其实在Java开发的时候用户线程很常见，常用的main线程就是用户线程，但是守护线程就不是那么常见了，但是它确实存在。如gc线程（垃圾回收线程），虽然在开发的时候我们无法明确的感知它的存在，但是它却在暗处守护着程序的执行。这就是守护线程。
-
-当两种线程同时存在的时候，虚拟机必须等到用户线程执行完毕的，但是虚拟机却不用等到守护线程执行完毕。
-
-设置守护线程的方法
-
-```java
-thread.setDaemon(true)
-```
-
-## 线程同步
-
-线程同步发生多个线程操作同一个资源的时候，也就是并发。
-
-要解决并发过程中的同步问题就需要让线程来排队，一个一个来访问，就不会导致资源的泄露和错误。
-
-当然，当队列排好了之后，为了防止某些祸乱分子的捣乱，需要在一个线程在执行的时候，给他提供安全的环境，于是，锁就出现了。当线程获得锁的时候，只有在这个线程完成它的任务后，其他线程才能继续完成他们的任务。
-
-所以要实现线程同步就需要：队列+锁
-
-让线程变得安全
-
-### 同步方法
-
-同步方法在方法定义上加上synchronized关键字即可让方法变为同步方法。此时的方法只有线程在获得锁之后才能使用。
-
-同步方法默认锁定this，就是调用这个方法的对象本身。
-
-```java
-public class TicketTest implements Runnable {
-
-    private int ticket = 100;
-    private boolean flag = true;
-
-    public synchronized void  buy() throws InterruptedException {
-        if(ticket < 1){
-            flag = false;
-            return;
-        }
-        Thread.sleep(500);
-        System.out.println(Thread.currentThread().getName()+"拿到了第："+(ticket--)+"张票");
-    }
-
-    @Override
-    public void run() {
-        while (flag){
-            try {
-                this.buy();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        TicketTest ticket = new TicketTest();
-        Thread liming = new Thread(ticket, "李明");
-        Thread dakang = new Thread(ticket, "达康书记");
-        Thread huangniu = new Thread(ticket, "黄牛");
-
-        dakang.start();
-        liming.start();
-        huangniu.start();
-    }
-}
-```
-
-### 同步块儿
-
-同步代码块儿就是拥有synchronized关键字的代码块儿，同步代码块儿的obj可以是任意对象，但是推荐使用共享资源作为同步监视器，也就是需要增删改的对象，obj就是同步监视器。
-
-```java
-synchronized (this){//obj
-    if(ticket < 1){
-        flag = false;
-        return;
-    }
-    Thread.sleep(500);
-    System.out.println(Thread.currentThread().getName()+"拿到了第："+(ticket--)+"张票");
-}
-```
-
-## 死锁
-
-死锁发生在多个线程各自占有一些共享资源，并且相互等待其他线程释放占有的资源才能运行，而导致两个或者多个线程都在等待对方释放资源，都停止执行的情形。
-
-某一个同步块同时拥有两个以上对象锁的时候，就可能发生死锁。
-
-### 死锁产生的四个必要条件
-
-- 一个资源一次被多个线程使用
-- 一个线程因为请求资源而被阻塞的时候，其他线程抱着这个资源不放
-- 线程已经获得的资源在未使用完之前，无法被强行剥夺
-- 若干线程之间形成一种头尾相接，循环等待资源的关系
-
-只要破坏四个必要条件其中之一，就能解除死锁
-
-以下代码演示了死锁的情况，当两个人都在拥有自己的东西的时候有希望获得别人的东西，则就会产生死锁，只有把自己的东西用完了就放开，才能解除死锁。
-
-```java
-public class Deadlock {
-    public static void main(String[] args) {
-        Makeup libai = new Makeup(0, "李白");
-        Makeup wangzhaojun = new Makeup(1, "王昭君");
-        libai.start();
-        wangzhaojun.start();
-    }
-}
-
-
-class Mirror {
-    String name = "梳妆镜";
-}
-
-class Lipstick {
-    String name = "阿玛尼口红";
-}
-
-class Makeup extends Thread {
-
-    private static Mirror mirror = new Mirror();
-    private static Lipstick lipstick = new Lipstick();
-
-    private int flag;
-    private String name;
-
-    Makeup(int flag, String name) {
-        this.flag = flag;
-        this.name = name;
-    }
-
-    public void makeUp() throws InterruptedException {
-        if (flag == 0){
-            synchronized (mirror){
-                System.out.println(name+"获得了"+mirror.name);
-                Thread.sleep(1000);
-                synchronized (lipstick){
-                    System.out.println(name+"获得了"+lipstick.name);
-                }
-            }
-        }else {
-            synchronized (lipstick){
-                System.out.println(name+"获得了"+lipstick.name);
-                Thread.sleep(1000);
-                synchronized (mirror){
-                    System.out.println(name+"获得了"+mirror.name);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void run() {
-        try {
-            makeUp();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-解决办法，将上述的同步代码块儿分开锁
-
-```java
-public void makeUp() throws InterruptedException {
-    if (flag == 0){
-        synchronized (mirror){
-            System.out.println(name+"获得了"+mirror.name);
-            Thread.sleep(1000);
-        }
-        synchronized (lipstick){
-            System.out.println(name+"获得了"+lipstick.name);
-        }
-    }else {
-        synchronized (lipstick){
-            System.out.println(name+"获得了"+lipstick.name);
-            Thread.sleep(1000);
-        }
-        synchronized (mirror){
-            System.out.println(name+"获得了"+mirror.name);
-        }
-    }
-}
-```
-
-## Lock锁
-
-lock锁和synchronized同步代码块儿的作用是一样的，不过lock锁是显示的声明同步锁。使用lock的时候使用Lock接口的实现ReentrantLock。
-
-lock锁必须放在try catch语句块儿中，解锁的语句必须放到finally语句块儿中。
-
-```java
-public class TicketTest implements Runnable {
-
-    private Integer ticket = 10;
-    private boolean flag = true;
-    Lock lock = new ReentrantLock();
-
-    public void buy() throws InterruptedException {
-        if (ticket < 1) {
-            flag = false;
-            return;
-        }
-        Thread.sleep(500);
-        System.out.println(Thread.currentThread().getName() + "拿到了第：" + (ticket--) + "张票");
-    }
-
-    @Override
-    public void run() {
-        while (flag) {
-            try {
-                lock.lock();
-                buy();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }finally {
-                lock.unlock();
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        TicketTest ticket1 = new TicketTest();
-        Thread liming = new Thread(ticket1, "李明");
-        Thread dakang = new Thread(ticket1, "达康书记");
-        Thread huangniu = new Thread(ticket1, "黄牛");
-
-        dakang.start();
-        liming.start();
-        huangniu.start();
-
-    }
-}
-```
-
-### lock锁和synchronized的对比
-
-| synchronized                 | lock锁                     |
-| ---------------------------- | -------------------------- |
-| 隐式锁，出了作用域自动释放锁 | 显示锁，必须手动上锁和解锁 |
-| 有代码块锁和方法锁           | 只有代码块锁               |
-| 性能更好                     | 性能相对较差               |
-
-优先使用顺序：Lock>同步代码块>同步方法
-
-## 线程通信
-
-通信方法
-
-| 方法        | 描述                   |
-| ----------- | ---------------------- |
-| wite()      | 线程释放锁进入等待状态 |
-| notify()    | 唤醒正在等待的线程     |
-| notifyAll() | 唤醒所有               |
-
-### 解决生产者消费者问题
-
-#### 管程法
-
-```java
-public class ProductionAndConsumptionIssues {
-    public static void main(String[] args) {
-        Buffer buffer = new Buffer();
-        new Producer(buffer).start();
-        new Consumer(buffer).start();
-    }
-}
-
-
-/**
- * 生产者
- */
-class Producer extends Thread {
-
-    Buffer buffer;
-
-    Producer(Buffer buffer) {
-        this.buffer = buffer;
-    }
-
-    @Override
-    public void run() {
-        for (int i = 1; i <= 20; i++) {
-            buffer.push(new Chicken(i));
-            System.out.println("生产了第" + i + "只鸡");
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
-
-
-/**
- * 消费者
- */
-class Consumer extends Thread {
-
-    Buffer buffer;
-
-    Consumer(Buffer buffer) {
-        this.buffer = buffer;
-    }
-
-    @Override
-    public void run() {
-        for (int i = 1; i <= 20; i++) {
-            try {
-                buffer.pop();
-                System.out.println("消费了第"+i+"只鸡");
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-}
-
-/**
- * 缓冲区
- */
-class Buffer {
-    //产品容器
-    Chicken[] chickens = new Chicken[10];
-    //计数器
-    int count = 0;
-
-    /**
-     * 向容器中放入产品
-     *
-     * @param chicken 鸡肉对象
-     */
-    public synchronized void push(Chicken chicken) {
-        if (count == chickens.length) {
-            this.notifyAll();
-        } else {
-            chickens[count] = chicken;
-            count++;
-            this.notifyAll();
-        }
-    }
-
-    /**
-     * 取出容器中的对象
-     */
-    public synchronized Chicken pop() throws InterruptedException {
-        Chicken chicken = null;
-        if (count == 0) {
-            this.wait();
-        } else {
-            count--;
-            chicken = chickens[count];
-            this.notifyAll();
-        }
-        return chicken;
-    }
-
-}
-
-/**
- * 产品：鸡肉
- */
-class Chicken {
-    int id;
-
-    Chicken(int id) {
-        this.id = id;
-    }
-}
-```
-
-#### 信号灯法
-
-使用标志位的方式判断哪一个线程等待，那一个线程被唤醒
-
-## Executor执行器(线程池)
-
-使用Executor可以很好的管理Thread对象，不用自己来决定线程的生命周期。
-
-Executors可以创建不同的线程池
-
-```java
-ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
-```
-
-```java
-ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
-```
-
-```java
-ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-```
-
-newFixedThreadPool可以预先执行线程分配，并且可以限制线程数量
-
-在任何线程池中，现有线程在可能的情况下，都会被自动复用。
-
-# synchronized详解
-
-synchronized锁定的是一个对象，每一个对象都有一把锁。
-
-```java
-String string = new String();
-public void paly(){
-    synchronized (string){
-        for (int i = 0; i < 10; i++) {
-            System.out.println("hello");
-        }
-    }
-}
-```
-
-如上代码，当执行这个方法中的代码的时候，synchronized就会锁定string对象，在使用这把锁的时候任何其他线程都无法执行这段代码。当synchronized代码块儿执行完毕后，会自动释放这把锁，此时其他线程获得这把锁，未获得锁的线程继续排队等待。这种同时只能有一个线程执行的代码的锁叫互斥锁。
-
-锁定的对象可以自己指定，就像上面这种情况，也可以使用下面的写法。
-
-```java
-public void paly(){
-    synchronized (this){
-        for (int i = 0; i < 10; i++) {
-            System.out.println("hello");
-        }
-    }
-}
-```
-
-使用this关键字表示锁定当前对象。同时这种还有一个等价写法，也叫同步方法。
-
-```java
-public synchronized void paly() {
-    for (int i = 0; i < 10; i++) {
-        System.out.println("hello");
-    }
-}
-```
-
-同步方法同样锁定的是this对象，锁同样是在代码块执行完成之后会被释放。
-
-如果synchronized是在静态方法上，那么就相当于是锁定了当前类.class这个对象
-
-```java
-class Ticket{
-    public synchronized static void paly() {
-        for (int i = 0; i < 10; i++) {
-            System.out.println("hello");
-        }
-    }
-}
-```
-
-如上这种情况，相当于是锁定了Ticket.class这个对象。等价于如下情况
-
-```java
-class Ticket {
-    public static void paly() {
-        synchronized (Ticket.class) {
-            for (int i = 0; i < 10; i++) {
-                System.out.println("hello");
-            }
-        }
-    }
-}
-```
-
- 一个synchronized代码块儿必定是一个原子操作，也就是说，当一个线程在执行synchronized代码块儿的时候是无法被打断的，只有当他完整执行完成，别的线程才能执行这个代码块儿。
-
-当一个synchronized方法在执行的过程中，非synchronized方法是可以执行的。
-
-同步方法中是否能够调用另一个同步方法呢？如下情况
-
-```java
-public class Demo2 {
-
-    public synchronized void m1() {
-        System.out.println("hello");
-        this.m2();
-    }
-
-
-    public synchronized void m2() {
-        System.out.println("thank");
-    }
-}
-```
-
-当m1在执行的时候调用了m2方法，从执行流程上说，执行m1的时候，获取了当前对象的锁，再调用m2的时候也需要去申请这把锁，但是发现这把锁就是自己已经拥有的这把锁。所以此种情况下是允许调用的。此种情况下的锁叫做重入锁。
-
-重入锁还有一种情况，就是在子类的同步方法中调用父类的同步方法，此种情形也是允许的。
-
-需要注意的一点是，当synchronized方法中出现异常的时候，锁会被释放。
-
-# volatile关键字
-
-```java
-volatile boolean flag = true; 
-```
-
-如上有一个字段是这么定义的，在多线程中，如果需要让多个线程同时知道一个字段发生了改变，那么久需要使用volatile关键字。
-
-通常来讲，在线程执行的时候，cpu将内存中的字段信息复制一份加入cpu的缓冲中，然后判断缓冲中字段的值，如果没有添加volatile关键字，那么在内存中的字段值发生改变的时候，缓冲中的值是无法及时更新的，但是加上了volatile关键字，那么在内存值发生改变的时候，就会通知cpu重新刷新值。
-
-volatile关键字可以保证可见性，但是无法保证原子性，所以volatile无法代替synchronized锁，但是volatile的性能却比synchronized高出很多。
-
 # 字符串
 
 String对象时不可变的，当创建了一个字符串之后如果对字符串进行改变则会重新创建一个字符串对象，将原来的引用指向它。最初的那个字符串对象则丝毫未动，只是我们无法访问到它了。
@@ -2799,7 +1932,8 @@ public class Demo01 {
 }
 ```
 
-如上代码，s1是原始字符串的引用，指向了"abcdefg"对象所在的地址，在调用upCase方法的时候实际向方法传递了一个s1引用的拷贝版本。当方法执行完了之后打印，发现原始的对象已经变成了大写的。但是打印s1还是小写，这说明s2实际上指向了一个新的字符串对象。而s1指向的则始终未动。
+如上代码，s1是原始字符串的引用，指向了"abcdefg"
+对象所在的地址，在调用upCase方法的时候实际向方法传递了一个s1引用的拷贝版本。当方法执行完了之后打印，发现原始的对象已经变成了大写的。但是打印s1还是小写，这说明s2实际上指向了一个新的字符串对象。而s1指向的则始终未动。
 
 实际上，每次把String对象作为方法的参数时，都会复制一份引用，而该引用所指的对象其实一致待在原来的物理位置上，从未动过。
 
@@ -2857,8 +1991,6 @@ public class PerformanceAspect {
 | valueOf          | 静态方法，将其他类型转换为string类型                         |
 | intern           | 将字符串放入字符串池中                                       |
 
-
-
 # Arrays工具类
 
 常用方法
@@ -2871,7 +2003,9 @@ public class PerformanceAspect {
 
 # Java中的正则表达式
 
-Java中的反斜杠：在其他语言中，使用  \\\  表示普通意义上的一个反斜杠，也就是字面意思上的反斜杠，而在Java中 \\\ 的意思则是表示一个正则表达式的反斜杠，后面紧跟的字符具有特殊的意义。比如表示一位数字，则在Java的正则表达式中应该是 \\\d ，如果是插入一个普通的反斜杠，则应该是 \\\\\\\  ，不过仍然有一部分只需要单反斜杠即可完成，比如制表符，换行符之类的。 
+Java中的反斜杠：在其他语言中，使用 \\\ 表示普通意义上的一个反斜杠，也就是字面意思上的反斜杠，而在Java中 \\\
+的意思则是表示一个正则表达式的反斜杠，后面紧跟的字符具有特殊的意义。比如表示一位数字，则在Java的正则表达式中应该是 \\\d ，如果是插入一个普通的反斜杠，则应该是 \\\\\\\
+，不过仍然有一部分只需要单反斜杠即可完成，比如制表符，换行符之类的。
 
 String类自带的正则表达式方法：
 
@@ -2897,7 +2031,8 @@ String类自带的正则表达式方法：
 
 ### 特殊字符
 
-所谓特殊字符，也就是在正则表达式中起到一定的特殊作用的字符，比如 “＋”，在正则表达式中它表示前面的表达式重复一次或者多次， 并不是我们平常以为的加号的意思，如果我们匹配的时候正好要匹配的内容中有“+”号，那么就需要对其转义，进而让正则表达式中的特殊字符回归它本来的意思。
+所谓特殊字符，也就是在正则表达式中起到一定的特殊作用的字符，比如 “＋”，在正则表达式中它表示前面的表达式重复一次或者多次，
+并不是我们平常以为的加号的意思，如果我们匹配的时候正好要匹配的内容中有“+”号，那么就需要对其转义，进而让正则表达式中的特殊字符回归它本来的意思。
 
 | 特别字符 | 描述                                                         |
 | :------- | :----------------------------------------------------------- |
@@ -2984,7 +2119,8 @@ String类自带的正则表达式方法：
 
 ### 匹配模式
 
-- **贪婪型**（最大匹配）：例如你要用 “<.+>” 去匹配 “a\<tr>aava \</tr>abb”，也许你所期待的结果是想匹配 “\<tr>”，但是实际结果却会匹配到 “\<tr>aava \</tr>，在贪婪模式下，会尽可能的扩大匹配范围，当扩大匹配无法成功时，又会缩小匹配范围
+- **贪婪型**（最大匹配）：例如你要用 “<.+>” 去匹配 “a\<tr>aava \</tr>abb”，也许你所期待的结果是想匹配 “\<tr>”，但是实际结果却会匹配到 “\<tr>aava \</tr>
+  ，在贪婪模式下，会尽可能的扩大匹配范围，当扩大匹配无法成功时，又会缩小匹配范围
 - **勉强型**（最小匹配）：也就是只要匹配成功，就不再扩大匹配范围
 - **占有型**（完全匹配）：在贪婪型的基础上不会重新缩小匹配范围
 
@@ -2999,19 +2135,17 @@ String类自带的正则表达式方法：
 | X{n,}  | X{n,}?  | X{n,}+  |
 | X{n,m} | X{n,m}? | X{n,m}+ |
 
-
-
-
-
 ## 三个类
 
-- **Pattern**类：pattern对象是一个正则表达式的编译表示。Pattern类没有公共构造方法。要创建一个Pattern对象，你必须首先调用其公共静态编译方法，它返回一个Pattern对象。该方法接受一个正则表达式作为它的第一个参数。
+- **Pattern**
+  类：pattern对象是一个正则表达式的编译表示。Pattern类没有公共构造方法。要创建一个Pattern对象，你必须首先调用其公共静态编译方法，它返回一个Pattern对象。该方法接受一个正则表达式作为它的第一个参数。
 - **Matcher**类：Matcher对象是对输入字符串进行解释和匹配操作的引擎。与Pattern类一样，Matcher也没有公共构造方法。你需要调用Pattern对象的matcher方法来获得一个Matcher对象。
 - **PatternSyntaxException**类：PatternSyntaxException是一个非强制异常类，它表示一个正则表达式模式中的语法错误。
 
 Pattern类和Matcher类对于Java中的正则表达式来说是很重要的，我们无法直接new处这两个类的对象，一般操作流程如下。
 
-使用静态方法Pattern.compile()参数为正则表达式，他会返回一个Pattern类型的对象，这是一个正则表达式的编译版本，然后再用其调用matcher方法，此方法会生成一个Matcher类型的对象。Matcher类型的对象有很多功能可以使用。例如下面的例子，使用replaceAll方法可以将匹配的部分都替换成传入的参数。
+使用静态方法Pattern.compile()
+参数为正则表达式，他会返回一个Pattern类型的对象，这是一个正则表达式的编译版本，然后再用其调用matcher方法，此方法会生成一个Matcher类型的对象。Matcher类型的对象有很多功能可以使用。例如下面的例子，使用replaceAll方法可以将匹配的部分都替换成传入的参数。
 
 ```java
 public class Demo01 {
@@ -3151,15 +2285,11 @@ public class Demo01 {
 }
 ```
 
-
-
-
-
 ## 组
 
 组是用括号表达的正则表达式，可以根据组的编号来引用某个组，组号为 0 的表示整个表达式，组号为1的表示第一对括号括起来的组，以此类推。
 
-如A（B（C））D。拥有三个组，0组：ABCD  1组：BC  2组：C
+如A（B（C））D。拥有三个组，0组：ABCD 1组：BC 2组：C
 
 Matcher对象可以使用groupCount方法获取本正则表达式的分组数，第0组不包括在内
 
@@ -3194,8 +2324,6 @@ flags可以调整匹配标准
 | UNICODE_CASE(?u)      | 当指定此标志时，不区分大小写的匹配（由[`CASE_INSENSITIVE`](http://www.matools.com/file/manual/jdk_api_1.8_google/java/util/regex/Pattern.html#CASE_INSENSITIVE)标志启用）以与Unicode标准一致的方式完成。 默认情况下，不区分大小写的匹配假定仅匹配US-ASCII字符集中的字符。 |
 | UNIX_LINES(?d)        | 在这种模式下，只有`'\n'`行结束在`.，^`和`$`行为的认可。      |
 
-
-
 # 类型信息
 
 ## Class对象
@@ -3212,7 +2340,8 @@ Java程序在运行时，并不是将所有字节码都加载进去，而是在�
 
 Class.forName()方法是Class类的一个静态方法，此静态方法会返回Class对象的引用。
 
-不管什么时候，如果你想在运行时获得类型信息，首先必须就是要获得Class对象的引用。使用Class.forName()就可以快速的办到这一点，而且他还有个有点，也就是不需要你创建了对应类的对象之后才能获得这个Class对象的引用，即使你没有这个对象，你也可以直接通过其类名获得此引用。（forName的参数是全限定名称，包含包名）
+不管什么时候，如果你想在运行时获得类型信息，首先必须就是要获得Class对象的引用。使用Class.forName()
+就可以快速的办到这一点，而且他还有个有点，也就是不需要你创建了对应类的对象之后才能获得这个Class对象的引用，即使你没有这个对象，你也可以直接通过其类名获得此引用。（forName的参数是全限定名称，包含包名）
 
 但是如果你已经拥有了类的对象，那么你也可以通过这种方式来获得Class对象的引用。
 
@@ -3424,8 +2553,6 @@ public class ClassCasts {
 | CLASS   | 在class文件中有效                            |
 | RUNTIME | 在运行时有效，为此值时注解可以被反射机制读取 |
 
-
-
 ## 自定义注解
 
 自定义注解的时候需要元注解的帮助，以此来完善我们自己的注解。同时我们自己也要给注解定义参数等信息。
@@ -3612,7 +2739,8 @@ setAccessible();
 
 当Java程序需要使用某个类时，如果该类还未被加载到内存中，JVM会通过加载、连接(验证、准备和解析)、初始化三个步骤来对该类进行初始化。
 
-类的加载是指把类的.class文件中的数据读入到内存中，通常是创建一个字节数组读入.class文件，读入的数据方法JVM内存的方法区中，然后产生与所加载类对应的Class对象，Class对象放入JVM的堆区中。加载完成后，Class对象还不完整，所以此时的类还不可用。当类被加载后就进入连接阶段，这一阶段包括验证、准备(为静态变量分配内存并设置默认的初始值)和解析(将符号引用替换为直接引用)三个步骤。最后JVM对类进行初始化，包括：
+类的加载是指把类的.class文件中的数据读入到内存中，通常是创建一个字节数组读入.class文件，读入的数据方法JVM内存的方法区中，然后产生与所加载类对应的Class对象，Class对象放入JVM的堆区中。加载完成后，Class对象还不完整，所以此时的类还不可用。当类被加载后就进入连接阶段，这一阶段包括验证、准备(
+为静态变量分配内存并设置默认的初始值)和解析(将符号引用替换为直接引用)三个步骤。最后JVM对类进行初始化，包括：
 
 1)如果类存在直接的父类并且这个类还没有被初始化，那么就先初始化父类;
 
@@ -3729,7 +2857,7 @@ jvm会为每一个线程都创建一个栈，用于存放该线程方法执行�
 
 jvm只有一个堆，被所有线程所共享
 
-堆是一个不连续的存储空间，分配灵活，速度慢 
+堆是一个不连续的存储空间，分配灵活，速度慢
 
 ### 方法区（也叫静态区）
 
@@ -3953,7 +3081,7 @@ class Test1 {
 
 | 方法                                                         | 说明                             |
 | ------------------------------------------------------------ | -------------------------------- |
-| arraycopy(Object src,  int  srcPos,Object dest, int destPos,int length); | 将原数组中的元素拷贝到新数组中去 |
+| arraycopy(Object src, int  srcPos,Object dest, int destPos,int length); | 将原数组中的元素拷贝到新数组中去 |
 | currentTimeMillis                                            | 返回当前时间的毫秒值             |
 
 # 装饰器设计模式
