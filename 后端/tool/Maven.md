@@ -231,6 +231,121 @@ maven查找构件的顺序：
 - 提高稳定性，增强控制：有了私服，断网了也能用
 - 降低中央仓库的负荷
 
+### 2.3 配置远程仓库
+
+很多时候默认的远程仓库无法满足我们的需求，项目需要的构件可能在另外一个仓库中；此时可以在pom中配置该仓库
+
+```xml
+
+<repositories>
+    <repository>
+        <id>jboss</id><!--id必须唯一，重复的id会被覆盖-->
+        <name>JBossReporsitory</name>
+        <url>http://repository.jboss.com/maven2/</url>
+        <releases><!--发布版本构件配置-->
+            <enabled>true</enabled><!--开启仓库发布版本构件下载的支持-->
+            <updatePolicy>daily
+            </updatePolicy><!--maven从远程仓库检查更新的频率，默认daily（一天一次）、never（从不检查）、always（每次构建都检查）、interval:X（每X分钟检查一次）-->
+            <checksumPolicy>ignoer
+            </checksumPolicy><!--配置maven检查检验文件的策略，maven部署构件的时候会同时部署校验和文件，下载的时候会校验和验证；当值为warn时，会输出警告，fail时会直接构建失败-->
+        </releases>
+        <snapshots><!--快照版本构件支持-->
+            <enabled>false</enabled><!--关闭仓库快照版本构件下载的支持-->
+            <updatePolicy></updatePolicy>
+            <checksumPolicy></checksumPolicy>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+### 2.4 远程仓库的认证
+
+大部分仓库是无需认证就可以访问的，但有时处于安全的考虑，需要我们提供认证信息才可以访问一些仓库；此时就需要配置认证信息；
+
+配置认证信息与配置仓库不同，仓库信息可以直接在pom文件中；但认证信息必须在settings.xml文件中，原因在于pom是提交到仓库中供大家使用的，而settings.xml则只在本地使用；因此认证信息放在settings.xml中更为安全；配置方式如下：
+
+```xml
+
+<servers>
+    <server>
+        <id>nexus</id><!--id必须和pom文件中需要认证的仓库保持一致，正是这个id将认证信息与pom中的仓库配置联系到了一起-->
+        <username>admin</username>
+        <password>123</password>
+    </server>
+</servers>
+```
+
+### 2.5 部署到远程仓库
+
+无论是日常开发中生成的构件，还是正式版发布的构件都需要部署到仓库中，供其他团队成员使用；maven除了能编译、测试、打包之外还能将项目生成的构件部署到仓库中；
+
+需要编辑项目的pom文件，配置distributionManagement元素
+
+```xml
+
+<distributionManagement>
+    <repository><!--发布版本构件发布的仓库-->
+        <id>repository-id</id>
+        <name>repository-name</name>
+        <url>http://repository-url</url>
+    </repository>
+    <snapshotRepository><!--快照版本构件发布的仓库-->
+        <id>repository-id</id>
+        <name>repository-name</name>
+        <url>http://repository-url</url>
+    </snapshotRepository>
+</distributionManagement>
+```
+
+> 发布的时候往往需要认证，认证的过程同样需要进行settings.xml配置; id需要和pom中的仓库中的id对应；
+
+配置正确后运行 `mvn clean deploy` 命令将构件发布到远程仓库中，如果当前构件的是快照版，则会发布到快照仓库中，反之发布到稳定版仓库中
+
+### 2.6 maven解析仓库构件的逻辑
+
+1. 若依赖范围是system，maven直接从本地文件系统解析构件
+2. 根据依赖坐标计算仓库路径后，尝试直接从本地仓库中寻找构件，如果找到，则解析成功
+3. 在本地仓库不存在相应构件的情况下，若依赖声明的是明确的显示的发布版的版本号，比如1.3、 1.3-beta-2等，则遍历所有远程仓库，发现后下载并使用；
+4. 若依赖版本是RELEASE或LATEST，则基于更新策略，读取远程仓库的元数据maven-metadata.xml，将其与本地版本的元数据合并后，计算出RELEASE或LATEST的真实值，基于这个真实值检查本地仓库和远程仓库
+5. 如果依赖的版本是SNAPSHOT，则基于更新策略，读取远程仓库的元数据，将其与本地版本的元数据合并后，计算出最新快照版的真实值，基于这个真实值检查本地仓库和远程仓库，如步骤2、3
+6. 如果得到的构件版本是时间戳版本的快照，如1.4.1-20090212.172346-12，则复制其时间戳版本的文件至非时间戳版本，并使用非时间戳版本的构件
+
+### 2.7 镜像仓库
+
+由于地理位置的元素，直接使用远程中央仓库，速度往往比较慢；因此可以使用镜像仓库；镜像仓库可以看成是你要使用的目标仓库的一个克隆版，只不过它距离你更近，速度更快；
+
+如下方式可以配置一个镜像仓库，除了外部的标签不一致外，其余配置与普通仓库的配置并无差异
+
+```xml
+
+<mirrors>
+    <mirror>
+        <id>alimaven</id>
+        <name>aliyun maven</name>
+        <url>https://maven.aliyun.com/repository/public</url>
+        <mirrorOf>central</mirrorOf>
+    </mirror>
+    <mirror>
+        <id>teams</id>
+        <mirrorOf>*</mirrorOf>
+        <name>Teams Maven Mirror</name>
+        <url>http://nexus.yunteams.cn/content/groups/public</url>
+        <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+        </snapshots>
+    </mirror>
+</mirrors>
+```
+
+mirror的高级使用，  <mirrorOf></mirrorOf>标签的其他值
+- *： 匹配所有远程仓库
+- external:* ：匹配所有不在本机上的远程仓库
+- repo1,repo2：使用逗号分隔多个仓库
+- *,!repo1：匹配除了repo1仓库外的所有仓库
+
+其中关键的标签为 `<mirrorOf>central</mirrorOf>`，它表示你需要镜像代理的目标仓库；如上代码第二个镜像配置，所有对central（中央仓库）的请求都会转发到这个镜像仓库中
+
 # 通过model创建工程模块
 
 首先新建一个maven项目，然后删除其中的src目录。此时整个项目就变成了一个空的骨架，这时的pom.xml文件就作为了以后model的总pom.xml文件了，承载了一些公共的依赖和配置。
@@ -506,5 +621,5 @@ maven支持将项目进行拆分，也就是将一个项目分成多个模块，
 - 启动核心模块（使用tomcat插件，此时需要将root打包到本地仓库中）
 - 使用本地tomcat启动
 
-#                                                                                               
+#                                                                                                                                    
 
