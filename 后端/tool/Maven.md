@@ -93,6 +93,7 @@ maven项目在使用的时候一共有3套classpath
 - provided：编译、测试时有效，运行时无效
 - runtime：对测试、运行时classpath有效，对编译主代码的classpath无效
 - system：该选项和provided与3套classpath的关系完全一致；
+- import：仅作用于依赖管理的dependencyManagement元素
 
 > 注：但使用system选项时必须通过systemPath元素显示的指示依赖文件的路径；由于此选项不是通过maven仓库解析识别；往往与本机系统绑定，会造成构件的不可移植性；
 
@@ -339,6 +340,7 @@ maven查找构件的顺序：
 ```
 
 mirror的高级使用，  <mirrorOf></mirrorOf>标签的其他值
+
 - *： 匹配所有远程仓库
 - external:* ：匹配所有不在本机上的远程仓库
 - repo1,repo2：使用逗号分隔多个仓库
@@ -346,192 +348,160 @@ mirror的高级使用，  <mirrorOf></mirrorOf>标签的其他值
 
 其中关键的标签为 `<mirrorOf>central</mirrorOf>`，它表示你需要镜像代理的目标仓库；如上代码第二个镜像配置，所有对central（中央仓库）的请求都会转发到这个镜像仓库中
 
-# 通过model创建工程模块
+# 3 maven生命周期与插件
 
-首先新建一个maven项目，然后删除其中的src目录。此时整个项目就变成了一个空的骨架，这时的pom.xml文件就作为了以后model的总pom.xml文件了，承载了一些公共的依赖和配置。
+maven对软件开发的整个过程有一套完整的抽象概念，即清理、初始化、编译、测试、打包、集成测试、验证、部署站点等；这套完整的抽象概念称为maven的生命周期
 
-建好父项目之后，直接在工程上面右键 -->new -->model即可，剩下的配置和创建过程就和平时的工程创建是一样的。
+生命周期是一套抽象概念和定义；而插件则是对生命周期的具体实现；比如maven的生命周期中有编译这一过程；则其具体功能的实现由maven-compile-plugin插件来实现
+![img_4.png](img_4.png)
 
-当新建一个model后，在最外层骨架的pom.xml中就会多一个model标签，同时父工程中的jar包，子model完全可以使用，反之则不行。
+## 3.1 三套生命周期
 
-# 使用maven创建web工程
+maven一共包含3套生命周期，每一套生命周期之间是相互独立的；生命周期内部分为多个阶段；而这些阶段在他们自己的生命周期内是相互依赖且有顺序的
 
-1. 新建一个maven项目
-2. 选择webapp骨架
-3. 补齐目录结构
-4. 配置本地tomcat服务器（结束）
+### 3.1.1 clean生命周期
 
-# Maven的作用
+clean生命周期的目的是清理项目，其包含三个阶段
 
-简单来说，maven是一个项目构建工具，在Java开发中可以很便捷的管理jar包等。
+- pre-clean：执行清理前需要处理的工作
+- clean：清理上一次构建的文件
+- post-clean：执行清理完成之后的一些功过
 
-Maven通过坐标的方式来从本地仓库中获取jar包，坐标的构成一般为：公司/组织名（groupId）+项目名/子项目名（artifactId）+版本号组成
+### 3.1.2 default生命周期
 
-对于maven的设置可以在maven开发包中的setting.xml中进行同意设置，包括配置阿里云镜像，修改本地仓库操作。
+default生命周期定义了真正构件项目时需要执行的所有步骤
 
-maven通过本地仓库管理jar包，可以让jar包和项目分离，从而减小项目体积，并且多个项目可以公用一个仓库，因此项目越多的时候越能体现出maven的高效和便捷。
+- validate
+- initialize
+- generate-source
+- process-source：处理项目主资源文件，一般是对/src/main/resources目录内内容进行变量替换后复制到项目输出的主cleasspath目录中
+- generate-reources
+- process-resources
+- compile：编译项目主代码，一般是对src/main/java目录下的java文件进行编译，并将编译后的文件输出到主classpath目录下
+- process-classes
+- generate-test-sources
+- process-test-sources：处理项目测试资源文件，一般是对/src/test/resources目录内内容进行变量替换后复制到项目输出的test的cleasspath目录中
+- generate-test-resources
+- process-test-reources
+- test-compile：编译项目测试代码，一般是对src/test/java目录下的java文件进行编译，并将编译后的文件输出到测试的classpath目录下
+- process-test-classes
+- test：使用单元测试框架进行测试，测试代码不会被打包部署
+- prepare-package
+- package：接收编译好的代码，打包成可发布的格式，比如jar
+- pre-intergration-test
+- intergration-test
+- post-intergration-test
+- verify
+- install：将包安装到本地Maven仓库
+- deploy：将最终的包复制到远程仓库
 
-# Maven的三种仓库
+### 3.1.3  site生命周期
 
-- 本地仓库
-- 中央仓库
-- 私服（远程仓库）
+site生命周期的目标是建立和发布项目站点，maven能基于pom文件，制动生成一个友好的站点，方便团队之间的交流合作
 
-本地仓库主要存放我们工程用到的jar包，是通过我们自己维护的。而本地仓库的jar包就是从中央仓库中下载的。
+- pre-site：执行项目站点生成之前的一些工作
+- site：生成项目站点文档
+- post-site：执行一些项目站点生成之后需要执行的一些工作
+- site-deploy：将生成的站点发布到服务器上
 
-中央仓库是由第三方的组织或者官方进行维护的。因此我们从中央仓库下载的jar包基本都是标准的jar包。
+结合平时使用的maven命令可以理解，执行命令时，实际执行的是生命周期的某个阶段
 
-私服是由公司搭建的，由公司内部维护的一个仓库，其中的jar包也是从中央仓库中下载的。配置私服主要是为了公司jar包安全和便于统一管理。
+比如 `mvn clean install` 执行的就是clean生命周期的pre-clean、clean阶段和default生命周期的validate到install阶段
 
-在项目中如果配置私服，那么工程加载jar包的顺序如下：
+## 3.2 插件目标和生命周期的绑定
 
-首先工程还是会去本地仓库中查找相应的jar包，如果没有找到，则会去私服中查找，如果仍然没有找到，就会到中央仓库进行查找，找到后会下载到私服，私服有了jar包，本地仓库就会从私服中下载jar包。最后本地仓库中也有了jar包，则项目使用本地仓库中的jar包。
+插件是对生命周期的具体实现，而每个插件可以实现多个功能；比如maven-dependency-plugin插件拥有如下功能：
 
-# 配置阿里云的仓库镜像
+- 列出项目已解析依赖
+- 列出项目依赖树
+- 分析项目依赖
 
-将下面的配置代码复制到setting.xml中的mirrors标签中即可
+上述每一个功能点即为这个插件的插件目标
 
-```xml
+因此完整的对应关系如下：
 
-<mirror>
-    <id>nexus-aliyun</id>
-    <mirrorOf>*</mirrorOf>
-    <name>Nexus aliyun</name>
-    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
-</mirror>
-```
+- 生命周期---maven插件
+- 生命周期阶段---maven插件目标
 
-# Maven的其他优点
+### 3.2.1 自定义插件目标与生命周期的绑定
 
-Maven由纯Java语言开发，因此支持跨平台的使用。同时使用maven开发，可以得到一个很清晰的工程结构，使用maven可以将一个大型项目按照模块拆分成若干个工程，不同的团队只需维护自己的模块即可。
+为了能让用户在没有任何配置的情况下也能使用maven，maven默认情况下对主要的生命周期阶段绑定了很多插件目标；当用户通过命令行调用生命周期阶段的时候，对应的插件目标就会执行对应的任务；
 
-# Maven的常用命令
+除了默认的绑定，开发人员可以自定义绑定插件目标到对应的生命周期阶段上；
 
-- clear：清理，清理编译出来的目录（target）
-- compile：编译，只编译main目录，不编译test目录
-- test-compile：编译test目录
-- test：运行test目录中的代码
-- package：打包 ，Java项目打成jar包，web项目打成war包
-- install：将项目发布到本地仓库，可以使用此命令将自己写好的jar包供其他团队使用
-- tomcat:run：一建构建项目
-
-# Maven命令的声明周期
-
-- Clean：生命周期：clean
-- Default：生命周期：compile、test-compile、test、package、install
-- Site：生命周期：site命令，用于描述工程的静态文档
-
-不同声明周期的命令可以一起执行，如
-
-```
-mvn clean compile
-```
-
-# Maven命令的执行顺序
-
-相同生命周期的命令会有执行顺序的影响，比如某些命令执行的时候它只会执行自己的命令，但是另外一些命令执行的时候，其他命令也会被指定。以Default生命周期的命令为说明：
-
-install > package > test > test-compile > compile
-
-如上的顺序说明，如果执行install命令的时候，那么后面的命令都会被执行一次，但是如果执行compile的时候，影响效果只限于compile命令自己的效果。
-
-# Maven添加tomcat插件
-
-如果不使用本地的tomcat服务器，可以直接使用Maven提供的tomcat进行运行，只需在pom.xml中添加tomcat插件即可
+如下配置方式将maven-source-plugin插件的jar-no-fork目标绑定到了default生命周期的verify阶段上
 
 ```xml
 
-<plugins>
-    <plugin>
-        <groupId>org.apache.tomcat.maven</groupId>
-        <artifactId>tomcat7-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-            <port>8081</port>
-            <path>/</path>
-        </configuration>
-    </plugin>
-</plugins>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.2.1</version>
+            <executions>
+                <execution>
+                    <id>attach-source</id>
+                    <phase>verify</phase><!--指定执行阶段-->
+                    <goals><!--绑定插件目标-->
+                        <goal>jar-no-fork</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 ```
 
-如上，即可添加tomcat插件，运行时直接在maven命令中执行tomcat:run即可
+当插件目标绑定到不同的生命周期阶段的时候，其执行顺序会由生命周期阶段的先后顺序决定；如果多个目标被绑定到同一个阶段，他们的执行顺序会由声明插件目标的先后顺序决定
 
-这里有一个值得注意的问题，当直接运行并访问的时候，可能会出现xxx is not a servlet的500错误，此时为jar包冲突所致，修改servlet依赖的使用范围为provide即可。
+## 3.3 插件配置
 
-# Maven中scope标签的使用
+绑定了生命周期阶段和插件目标；还可以配置插件目标的参数；
 
-scope表示的为jar包的依赖作用范围，也就是规定了引入了jar包在哪些范围中是有效的。
+有2中方式配置插件目标参数：
 
-- compile(默认值)：在编译、运行、测试、打包下都有效
-- provided：编译、测试时有效，运行、打包时无效
-- test：仅在测试时有效
-- runtime：测试、运行、打包时有效
-- syatem：不推荐使用，使用此范围时，不会去本地仓库寻找依赖
+1. 命令行配置参数
+2. pom文件配置参数
 
-| 作用域   | 编译  | 测试  | 运行  | 打包  | 示例        |
-| -------- | :---: | :---: | :---: | :---: | ----------- |
-| compile  | **√** |   √   | **√** | **√** | spring-core |
-| provided | **√** |   √   | **×** | **×** | servlet-api |
-| test     | **×** | **√** | **×** |   ×   | junit       |
-| runtime  | **×** | **√** |   √   |   √   | JDBCDriver  |
+### 3.3.1 命令行配置参数
 
-# 开启tomcat热部署
+可以在Maven命令中使用-D参数，其后接上参数key=参数value的方式来配置，如下
 
-热部署：在tomcat运行的时候，不用停止tomcat也可以发布web项目上去。
+```shell
+mvn install -Dmaven.test.skip=true 
+```
 
-要开启tomcat热部署，需要修改tomcat包中conf/tomcat-users.xml文件，向其中添加
+此配置将default生命周期的test插件目标配置跳过执行，故不会执行test的操作
+
+### 3.3.2 pom中插件全局配置
+
+命里行配置虽然灵活度高，但比较繁琐，每次执行都要配置；对于哪些确定的参数，可以通过pom文件定死，写好后每次会以这个参数执行插件目标；例如：
 
 ```xml
 
-<role rolename="manager-gui"/>
-<role rolename="manager-script"/>
-<user username="tomcat" password="12345" roles="manager-gui,manager-script"/>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.1</version>
+            <configuration><!--插件目标配置-->
+                <source>1.5</source>
+                <target>1.5</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 ```
 
-# Maven中jar包的冲突解决
+# 4 Maven 聚合
 
-### 方式一
+Maven项目开发过程中可能会产生多个模块，如模块A、B、C；很多时候构建项目的时候我们需要A、B、C一起构件，而非对每一个项目单独使用maven构建命令；
 
-第一声明优先原则：在pom.xml文件中，坐标位置靠上的jar包依赖是优先声明的，此时这个包里的依赖包会优先进入项目中，如果其他jar包也同样依赖了上面这个jar的依赖包，那么将会以上面优先引入的依赖包为准。
+而Maven的聚合则可以很好的解决这个问题
 
-### 方式二
-
-路径近者优先原则
-
-直接依赖：项目中直接导入的jar包，就是该项目的直接依赖包，也就是在pom.xml中直接声明的依赖。
-
-传递依赖：项目中并没有明确引入依赖的jar包，但是确实又存在于工程之中的jar包，此为传递依赖
-
-直接依赖的优先级高于传递依赖（直接依赖路劲近于传递依赖）
-
-### 方式三
-
-直接排除法
-
-若在某个jar包中，其中的依赖包不想使用默认版本，可以直接将其排除
-
-```xml
-
-<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-webmvc</artifactId>
-    <version>5.2.3.RELEASE</version>
-    <exclusions>
-        <exclusion>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-```
-
-# Maven版本锁定和统一版本管理
-
-使用版本锁定，可以让子工程进行继承父工程时，核心版本不被改变（即使是直接依赖也不行）
-
-版本统一管理可以让工程的版本升级更加高效
-
-如下演示了统一版本管理和版本锁定
+使用Maven聚合需要单独新建一个模块用于聚合，其具体的pom文件配置如下；
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -540,86 +510,188 @@ scope表示的为jar包的依赖作用范围，也就是规定了引入了jar包
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ctbu</groupId>
-    <artifactId>web-review</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0</version>
+    <groupId>com.juvenxu.mvnbook.account</groupId>
+    <artifactId>account-aggregator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging> <!--用于搭建聚合的模块packaging元素的值必须为pom，否则无法聚合-->
+
     <modules>
-        <module>servlet-01</module>
-        <module>singleton01</module>
-        <module>container</module>
-        <module>spring-web</module>
+        <!--需要聚合的模块列表-->
+        <module>../account-email</module>
+        <module>../account-persist</module>
     </modules>
 
+</project>
+```
 
-    <!--统一版本管理-->
+如上配置所示，要同时构件account-email、account-persist。只需在account-aggregator模块执行mvn命令 `mvn clean install`即可
+
+在Maven执行构件命令的时候，会解析聚合模块的pom，根据这个pom文件解析出需要构建模块，以及构件的顺序；然后根据这个顺序依此构件所有模块；
+
+# 5 Maven的pom继承
+
+在多个模块中，可能会存在很多相同的配置和依赖，这些重复的配置和依赖会增加项目配置的工作量，且修改的时候容易出现遗漏导致一些难以理解的问题且难以排查； 使用Maven的继承可以很好的解决这一问题；
+
+maven的继承类似java的父类，它可以将公共的配置和依赖抽取到父pom中，这样就可以实现配置和依赖的复用；
+
+使用继承需要定义如下父pom
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.juvenxu.mvnbook.account</groupId>
+    <artifactId>account-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging> <!--用于搭建继承的模块packaging元素的值必须为pom，否则无法继承-->
+
+</project>
+```
+
+并且在子模块中显示配置其父pom文件的坐标；如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--显示的指定父pom的坐标-->
+    <parent>
+        <artifactId>account-aggregator</artifactId>
+        <groupId>com.juvenxu.mvnbook.account</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>pom.xml</relativePath><!--父模块的相对位置，默认值是../pom.xml（也就是默认父模块默认在当前目录的上一层）-->
+    </parent>
+
+    <groupId>com.juvenxu.mvnbook.account</groupId>
+    <artifactId>account-email</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>account-email</name>
+</project>
+```
+
+当构建时，会根据 <relativePath>pom.xml</relativePath> 检查父pom，如果找不到，则从本地仓库查找
+
+最后如果想使用聚合的功能，则将父pom也一起配置到聚合模块中
+
+## 5.1 可被继承的pom元素
+
+1. groupId ：项目组 ID ，项目坐标的核心元素；
+2. version ：项目版本，项目坐标的核心元素；
+3. description ：项目的描述信息；
+4. organization ：项目的组织信息；
+5. inceptionYear ：项目的创始年份；
+6. url ：项目的 url 地址
+7. develoers ：项目的开发者信息；
+8. contributors ：项目的贡献者信息；
+9. distributionManagerment ：项目的部署信息；
+10. issueManagement ：缺陷跟踪系统信息；
+11. ciManagement ：项目的持续继承信息；
+12. scm ：项目的版本控制信息；
+13. mailingListserv ：项目的邮件列表信息；
+14. properties ：自定义的 Maven 属性；
+15. dependencies ：项目的依赖配置；
+16. dependencyManagement ：醒目的依赖管理配置；
+17. repositories ：项目的仓库配置；
+18. build ：包括项目的源码目录配置、输出目录配置、插件配置、插件管理配置等；
+19. reporting ：包括项目的报告输出目录配置、报告插件配置等。
+
+# 6 依赖管理
+
+当多个项目中出现多个子模块使用相同的依赖，且版本需要得到统一控制的时候，可以使用Maven的依赖管理进行处理； 使用依赖管理可以最大程度的统一项目依赖的版本，降低依赖的重复配置
+
+依赖管理具体使用如下，在父模块的pom文件中配置：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.juvenxu.mvnbook.account</groupId>
+    <artifactId>account-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
     <properties>
-        <spring.version>5.2.3.RELEASE</spring.version>
-        <mysql.version>5.1.47</mysql.version>
-        <mybatis.version>3.5.3</mybatis.version>
+        <spring.version>2.5.6</spring.version>
+        <juint.version>4.7</juint.version>
     </properties>
 
-    <!--版本锁定-->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${juint.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!--工程依赖-->
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>${mybatis.version}</version>
-        </dependency>
-    </dependencies>
 </project>
 ```
 
-# 使用Maven进行模块化开发
+dependencyManagement元素声明的依赖并不会直接作用于项目，也就是它并不会立马就被引入到当前项目中；只有当子模块实际引用类父模块中定义的依赖后，该依赖才会实际生效；可以理解为父pom中只是定义了这些依赖可以被怎么使用
 
-maven支持将项目进行拆分，也就是将一个项目分成多个模块，模块可以统一继承自某一个父项目，父项目的jar包可以被子模块继承。如果各个模块之间需要相互引用，可以将模块的坐标写入pom.xml文件，供其他模块引用即可。
+子模块中通过如下方式使用，让依赖具体生效
 
-### 父工程
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-使用maven创建一个父工程，只需保留父工程的pom.xml即可，父工程的作用主要就是管理模块的公共依赖。
+    <groupId>com.juvenxu.mvnbook.account</groupId>
+    <artifactId>account-child</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-### 子模块
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+```
 
-那经典的Java三层架构来说，dao层、service层、controller层每一个都能独立成为一个模块。他们之间通过maven坐标的方式进行通信，其中service、dao模块在建立的时候可以不用web的骨架了，因为出去了controller之后，他们就是一个纯的Java项目。
+## 6.1 特殊的依赖范围 import
 
-当一个A模块引入了B模块之后，A中就相当于拥有了B中的完整代码和配置文件。
-
-# Maven父子工程的 3 种启动方式
-
-- 直接启动root父工程（用tomcat插件）
-- 启动核心模块（使用tomcat插件，此时需要将root打包到本地仓库中）
-- 使用本地tomcat启动
-
-#                                                                                                                                    
+该依赖范围仅针对dependencyManagement元素有效，使用该范围的依赖通常指向一个pom，其作用是将pom中的dependencyManagement配置，导入融合到当前pom的dependencyManagement元素中
 
