@@ -695,3 +695,64 @@ dependencyManagement元素声明的依赖并不会直接作用于项目，也就
 
 该依赖范围仅针对dependencyManagement元素有效，使用该范围的依赖通常指向一个pom，其作用是将pom中的dependencyManagement配置，导入融合到当前pom的dependencyManagement元素中
 
+# 7 插件管理
+
+与dependencyManagement类似，对于插件的依赖和配置可以通过pluginManagement进行复用；在父模块中声明的插件依赖、版本和配置都不会产生实际的效果，只有摸个子模块显示的声明引用了父副模块中的插件后，该插件才会实际生效；
+如果使用的配置和父模块中声明的完全一致，则可以简单的声明组id和构件id即可；如果所需配置与父配置不同，则完全可以自定义子模块中插件的配置以覆盖父模块配置；版本好仍然继承父模块
+
+# 8 聚合与继承的关系
+
+- 聚合的目的是为了快速方便的构建项目
+- 继承的目的是为了消除重复的配置
+- 两者pom文件配置的packaging类型都必须为pom类型
+- 两者除了pom文件外都没有其他实际的内容
+- 实际的开发过程中，通常一个pom既是聚合pom，也是继承pom（父pom）
+
+![img_5.png](img_5.png)
+
+# 9 Maven反应堆
+
+反应堆指的是maven所有模块组成的一个构建结构，对于单项目来说，反应堆就是该模块本身；对于多模块项目，反应堆包含了各个模块之间的依赖和继承关系，根据这个依赖关系，可以计算出整个项目合理的构建顺序；
+
+maven的实际构建顺序：
+
+1. maven按顺序读取pom，如果该pom没有依赖模块，则构建该模块；否则先构建其依赖的模块
+2. 如果依赖的模块还依赖其他模块则进一步构建内层依赖的模块
+
+模块之间的依赖关系会将反应堆构建成一个有向无环图；各个模块是图中的节点，依赖关系是有向边；这个图不允许出现循环；因此，当模块之间循环依赖的时候，maven会报错；
+
+## 9.1 裁剪反应堆
+
+构建maven项目的时候，我们可以单个项目构建，也可以所有项目一起构建。但如果只想构建项目中的部分模块则比较困难；反应堆的裁剪就是解决此问题的；
+
+- -pl projects <arg>：指定构建某几个模块
+
+```shell
+mvn clean install -pl account-email,account-perisit
+```
+
+- -pl projects -am：同时构建所列模块的依赖模块
+
+```shell
+mvn clean install -pl account-email -am
+```
+
+- -pl projects -amd：同时构建依赖于所列模块的模块
+
+```shell
+mvn clean install -pl account-email -amd
+```
+
+- -rf：在完整的反应堆构建顺序上，指定从那个模块开始构建
+
+```shell
+mvn clean install -pl account-parent -amd -rf account-email
+```
+
+在前面3个命令的基础上，组合使用第4个命令，可以对裁剪出来的反应堆二次裁剪，如下例子：
+
+```shell
+mvn clean install -pl account-email,account-perisit
+```
+
+> 在项目庞大，模块数量多的时候，使用反应堆裁剪，可以极大的提高构建速度
