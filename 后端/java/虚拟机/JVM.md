@@ -340,28 +340,135 @@ public class ReferenceCountingGC {
 
 ### 4.2.3 对象的引用
 
-1. 强引用（Strongly Re-ference）:是指在程序代码之中普遍存在的引用赋值，即类似“Object obj=new Object()”这种引用关系。无论任何情况下，只要强引用关系还存在，垃圾收集器就永远不会回
-   收掉被引用的对象。
-2. 软引用（Soft Reference）:用来描述一些还有用，但非必须的对象。只被软引用关联着的对象，在系统将要发生内 存溢出异常前，会把这些对象列进回收范围之中进行第二次回收，如果这次回收还没有足够的内存， 才会抛出内存溢出异常
-3. 弱引用（Weak Reference）:也是用来描述那些非必须对象，但是它的强度比软引用更弱一些，被弱引用关联的对象只 能生存到下一次垃圾收集发生为止。当垃圾收集器开始工作，无论当前内存是否足够，都会回收掉只 被弱引用关联的对象
-4. 虚引用（Phantom Reference）:也称为“幽灵引用”或者“幻影引用”，它是最弱的一种引用关系。一个对象是否有虚引用的 存在，完全不会对其生存时间构成影响，也无法通过虚引用来取得一个对象实例。为一个对象设置虚
-   引用关联的唯一目的只是为了能在这个对象被收集器回收时收到一个系统通知。
+#### 4.2.3.1 强引用
 
-### 4.2.4 回收堆（对象生存还是死亡？）
-
-对象到GC root的不可达只是对象被回收的前提条件之一，对象要真正达到可被回收的状态，需要2次标记过程；
-
-1. 经过可达性算法分析后，若对象与GC root不可达，则第一次被标记
-2. 第一次标记后进入筛选，筛选条件为是否有必要执行对象的finalize()方法
-3. 若finalize()没有被复写，或finalize()已经被虚拟机执行过；则没有必要执行；这部分对象基本就会被最终回收
-4. 反之判定为有必要执行finalize()，则这些对象会被放入名为F-Queue的队列中，虚拟机会单独建立一个线程去执行这些对象的finalize()方法；这是对象被救活的最后时机，如果在finalize()
-   方法执行过程中，对象被建立了新的引用；则这个对象会被从"即将回收"的状态中移除；反之对象就会被真正回收
-
-#### 4.2.4.1 代码示例
+Java对象的强引用是指在程序代码中直接引用对象。如下代码就是一个强引用。如果一个对象是被强引用的，即使内存不足，Java虚拟机也不会回收该对象。除非显示的释放该引用或者超出该对象的作用范围
 
 ```java
-    public class FinalizeEscapeGC {
-    public static FinalizeEscapeGC SAVE_HOOK = null;
+class Demo {
+    public void method() {
+        //obj引用了一个Object对象，这个引用就是强引用
+        {
+            Object obj = new Object();
+            //直接赋值null，该引用就被显式的释放了，这个对象就可以被回收
+            obj = null;
+        }
+        //到这里，obj指向的对象已经超过了作用范围，该对象也可以被回收
+    }
+
+    public static void main(String[] args) {
+        Object obj1 = new Object();   // 创建一个对象并赋值给 obj1
+        Object obj2 = obj1;           // 强引用 obj1，将其赋值给 obj2
+        obj1 = null;                  // 显式将 obj1 的引用设置为 null，但 obj2 引用仍然存在
+        System.gc();                  // 垃圾回收器不会回收 obj2 引用的对象
+        System.out.println(obj2);     // 输出 obj2 引用的对象，它不会被回收
+    }
+}
+
+
+
+```
+
+#### 4.2.3.2 软引用
+
+Java中软引用是一种较弱的引用类型，当一个对象被软引用时。该对象就可能被垃圾回收。当内存不足时，软引用的对象就被尽可能多的回收
+
+```java
+public class SoftReferenceExample {
+    public static void main(String[] args) {
+        Object obj = new Object(); // 创建一个对象
+        SoftReference<Object> softRef = new SoftReference<>(obj); // 创建一个软引用
+        obj = null; // 将 obj 置为 null，只有软引用指向该对象
+        // 可以通过 softRef.get() 方法获取软引用所引用的对象
+        // 在系统内存不足时，垃圾回收器可能会回收软引用所引用的对象
+    }
+}
+
+//另外一种软引用的创建方式
+public class MySoftReference<T> extends SoftReference<T> {
+    // 构造函数
+    public MySoftReference(T referent) {
+        super(referent);
+    }
+
+    // 覆盖 get() 方法
+    @Override
+    public T get() {
+        T obj = super.get();
+        // 对 obj 进行一些操作
+        return obj;
+    }
+}
+
+```
+
+软引用通常用于缓存数据或对象池中的对象，因为这些对象通常需要经常使用，但又不是必需的。在缓存或对象池中， 如果一个对象长时间不被使用，它可能就可以被垃圾回收器回收了。因此，在编写代码时，需要根据具体场景来选择适当的引用类型，
+以优化应用程序的性能和内存使用情况。
+
+#### 4.2.3.3 弱引用
+
+Java 中的弱引用是一种比软引用更弱的引用类型，它可以让对象更容易被垃圾回收器回收。如果一个对象只被弱引用所引用，那么当垃圾回收器扫描到这个对象时，它会被回收。弱引用通常用于缓存、映射等场景，可以有效避免内存泄漏问题
+
+```java
+public class MyCache<K, V> {
+    private Map<K, WeakReference<V>> cache = new HashMap<>();
+
+    public void put(K key, V value) {
+        cache.put(key, new WeakReference<>(value));
+    }
+
+    public V get(K key) {
+        WeakReference<V> weakRef = cache.get(key);
+        if (weakRef != null) {
+            return weakRef.get();
+        } else {
+            return null;
+        }
+    }
+}
+
+```
+
+#### 4.2.3.4 虚引用
+
+虚引用通常被用于在一个对象被垃圾回收器回收时收到一个系统通知。虚引用与引用队列（ReferenceQueue）结合使用，当虚引用所引用的对象被垃圾回收器回收时，该虚引用就会被加入到引用队列中。通过检查引用队列中是否包含虚引用，我们可以得知对象何时被垃圾回收器回收了。
+
+```java
+public class PhantomReferenceDemo {
+    public static void main(String[] args) {
+        Object obj = new Object();
+        ReferenceQueue<Object> refQueue = new ReferenceQueue<>();
+        PhantomReference<Object> phantomRef = new PhantomReference<>(obj, refQueue);
+        obj = null; // 解除强引用
+        System.gc(); // 强制进行垃圾回收
+        try {
+            // 等待虚引用被放入引用队列
+            Reference<? extends Object> ref = refQueue.remove();
+            if (ref instanceof PhantomReference) {
+                System.out.println("Object has been collected by GC");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+        ### 4.2.4回收堆（对象生存还是死亡？）
+
+        对象到GC root的不可达只是对象被回收的前提条件之一，对象要真正达到可被回收的状态，需要2次标记过程；
+
+        1.经过可达性算法分析后，若对象与GC root不可达，则第一次被标记
+        2.第一次标记后进入筛选，筛选条件为是否有必要执行对象的finalize()方法
+        3.若finalize()没有被复写，或finalize()已经被虚拟机执行过；则没有必要执行；这部分对象基本就会被最终回收
+        4.反之判定为有必要执行finalize()，则这些对象会被放入名为F-Queue的队列中，虚拟机会单独建立一个线程去执行这些对象的finalize()方法；这是对象被救活的最后时机，如果在finalize()
+        方法执行过程中，对象被建立了新的引用；则这个对象会被从"即将回收"的状态中移除；反之对象就会被真正回收
+
+        #### 4.2.4.1代码示例
+
+        ```java
+
+public class FinalizeEscapeGC { public static FinalizeEscapeGC SAVE_HOOK = null;
 
     public void isAlive() {
         System.out.println("yes, i am still alive :)");
@@ -397,6 +504,7 @@ public class ReferenceCountingGC {
             System.out.println("no, i am dead :(");
         }
     }
+
 }
 
 ```
@@ -440,10 +548,12 @@ public class ReferenceCountingGC {
 #### 4.3.1.2 标记清除算法
 
 整个过程为：
+
 1. 标记需要回收的对象（或反向标记不需要回收的对象）
 2. GC回收被标记的对象（或反向回收没有被标记的对象）
 
 主要缺点为：
+
 1. 如果现在100个对象90个都是要被回收的，那标记和回收过程的开销都是比较大的
 2. 标记回收后没有内存整理，导致回收后的内存都比较碎片化，不便再次利用
 
@@ -452,10 +562,9 @@ public class ReferenceCountingGC {
 为什么是8：1：1的分配？
 
 主要缺点：
+
 1. 内存对半分的情况下会浪费一般内存；故需要根据实际情况；合理划分空闲区域的内存大小
-![img_19.png](img_19.png)
-
-
+   ![img_19.png](img_19.png)
 
 # Class文件的结构
 
