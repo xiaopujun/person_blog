@@ -1,15 +1,92 @@
-# join语句的优化
-
-# 一、查看sql执行计划 explain
+# 一、sql执行计划 explain
 
 ```sql
 explain
 select *
-from user
+from student
 where id = 1;
 ```
 
-使用explain关键字可以分析出sql语句的执行计划，是否使用了索引，是否使用了全表扫描等。
+## 1.1 explain输出说明
+
+|字段|说明|
+|---|---|
+|id| SELECT 查询的标识符. 每个 SELECT 都会自动分配一个唯一的标识符.|
+|select_type| SELECT 查询的类型.|
+|table| 查询的是哪个表|
+|partitions| 匹配的分区|
+|type| join 类型|
+|possible_keys| 此次查询中可能选用的索引|
+|key| 此次查询中确切使用到的索引.|
+|ref| 哪个字段或常数与 key 一起被使用|
+|rows| 显示此查询一共扫描了多少行. 这个是一个估计值.|
+|filtered| 表示此查询条件所过滤的数据的百分比|
+|extra| 额外的信息|
+
+## 1.2 select_type
+
+select_type表示查询的类型，其值有如下：
+
+|值|说明|
+|---|---|
+|SIMPLE|简单查询，不包含子查询或UNION。|
+|PRIMARY|包含复杂的子查询，最外层查询标记为该值。|
+|SUBQUERY|在SELECT或WHERE中包含子查询，被标记为该值。|
+|DERIVED|在FROM中包含子查询，被标记为该值。|
+|MATERIALIZED|表示子查询被物化。这意味着MySQL会先执行子查询，然后将结果存储在临时表中，再使用临时表来执行外部查询。|
+|UNCACHEABLE SUBQUERY|一个子查询的结果不能被缓存，必须重新评估外链接的第一行。|
+|UNCACHEABLE UNION|第二个或后续的SELECT语句属于不可缓存的UNION。|
+|DEPENDENT SUBQUERY|一个子查询，它依赖于外部查询的结果，并且可能对每个行重新评估。|
+|DEPENDENT UNION|第二个或后续的SELECT语句属于依赖于外部查询的结果的UNION。|
+|UNION RESULT|从前面的UNION表中检索结果。|
+|UNION|第二个或后续的SELECT语句属于UNION。|
+
+## 1.3 type
+
+在MySQL中，EXPLAIN语句的结果中的type字段表示MySQL在表中找到所需行的方式， 也称为“访问类型”。根据性能从优到劣， type字段的取值依次为：NULL > system > const > eq_ref > ref >
+range > index > all。
+
+|值|说明|
+|---|---|
+|NULL| MySQL 不用访问表或者索引就直接能到结果。|
+|system| 表示查询的表只有一行记录（等于系统表），这是const类型的特例，即系统表。|
+|const| 表示通过索引一次就找到了，const用于比较primary key或者unique索引。因为只匹配一行数据，所以很快。|
+|eq_ref| 表示唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描。|
+|ref| 表示非唯一性索引扫描，返回匹配某个单独值的所有行。本质上也是一种索引访问，返回所有匹配某个单独值的行，但是可能会找到多个符合条件的行，所以速度比eq_ref慢。|
+|range| 表示只检索给定范围的行，使用一个索引来选择行。key列显示使用了哪个索引。一般就是在你的where语句中出现了between、<、>、in等的查询。|
+|index| 表示全索引扫描(full index scan)，和all区别为index类型只遍历索引树。这通常比all快，因为索引文件通常比数据文件小。（也就是说虽然all和index都是读全表，但index是从索引中读取的，而all是从硬盘读取的）|
+|all| 表示全表扫描，这种情况下MySQL将遍历全表以找到匹配的行。|
+
+## 1.4 possible_keys
+
+表示查询优化器使用了索引的字节数. 这个字段可以评估组合索引是否完全被使用, 或只有最左部分字段被使用到. key_len 的计算规则如下:
+
+- 字符串
+    - char(n): n 字节长度
+    - varchar(n): 如果是 utf8 编码, 则是 3 n + 2字节; 如果是 utf8mb4 编码, 则是 4 n + 2 字节.
+- 数值类型:
+    - TINYINT: 1字节
+    - SMALLINT: 2字节
+    - MEDIUMINT: 3字节
+    - INT: 4字节
+    - BIGINT: 8字节
+- 时间类型
+    - DATE: 3字节
+    - TIMESTAMP: 4字节
+    - DATETIME: 8字节
+- 字段属性: NULL 属性 占用一个字节. 如果一个字段是 NOT NULL 的, 则没有此属性.
+
+## 1.5 extra
+
+|值|说明|
+|---|---|
+|Using filesort|说明MySQL会对数据使用一个外部的索引排序，而不是按照表内的索引顺序读取。MySQL无法利用索引完成的排序操作称之为文件排序，常见于order by排序1。|
+|Using temporary|表示MySQL在对查询结果排序时使用临时表。常见于多表join语句。|
+|Using index|表示查询的内容可以直接在索引中拿到，也就是所谓的“覆盖索引”。|
+|Using where|表示使用了WHERE从句来限制哪些行将与下一张表匹配或者是返回给用户。|
+|Using join buffer|表示使用了连接缓存。|
+|Impossible where|表示WHERE子句总是false，不能用来获取任何元组。|
+|Select tables optimized away|在没有GROUP BY子句的情况下，基于索引优化MIN/MAX操作或者对于MyISAM存储引擎优化COUNT(*)操作，不必等到执行阶段再进行计算，查询执行计划生成阶段即可完成优化。|
 
 # 二、not in语句无法使用索引
 
