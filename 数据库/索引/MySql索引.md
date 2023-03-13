@@ -1,6 +1,6 @@
 # 索引
 
-![](D:\study\person_blog\数据库\索引\Mysql索引.png)
+![MySQL索引](D:\study\person_blog\数据库\索引\Mysql索引.png)
 
 MySQL 索引是一种数据结构，用于加快查询速度。它类似于书籍的目录，可以快速定位到某个关键字对应的数据行。MySQL 索引可以在查询时提供快速的访问路径，从而减少全表扫描的开销，提高查询效率。
 
@@ -12,12 +12,13 @@ MySQL 索引的原理是通过创建一个索引数据结构，将索引列的�
 
 建立方式上分为：
 
-1. 主键索引：primary key。定为主键后，数据库自动建立索引，InnoDB为聚簇索引，主键索引列值不能为空（Null）。
-2. 唯一索引：索引列的值必须唯一，但允许有空值（Null），但只允许有一个空值（Null）。
-3. 复合索引：一个索引可以包含多个列，多个列共同构成一个复合索引。
-4. 全文索引：Full Text（MySQL5.7之前，只有MYISAM存储引擎引擎支持全文索引）。全文索引类型为FULLTEXT，在定义索引的列上支持值的全文查找允许在这些索引列中插入重复值和空值。全文索引可以在Char、VarChar
+1. 单列索引：只针对一列数据创建的索引
+2. 多列索引：由多个列组成的索引
+3. 唯一索引：可以单列，也可以多列。索引值必须唯一，允许有空值（Null），但只允许有一个空值（Null）。
+4. 主键索引：属于单列索引的一种。定为主键后，数据库自动建立索引，InnoDB为聚簇索引，主键索引列值不能为空（Null）。
+5. 全文索引：Full Text（MySQL5.7之前，只有MYISAM存储引擎引擎支持全文索引）。全文索引类型为FULLTEXT，在定义索引的列上支持值的全文查找允许在这些索引列中插入重复值和空值。全文索引可以在Char、VarChar
    上创建。
-5. 前缀索引：在文本类型为char、varchar、text类列上创建索引时，可以指定索引列的长度，但是数值类型不能指定。
+6. 前缀索引：在文本类型为char、varchar、text类列上创建索引时，可以指定索引列的长度，但是数值类型不能指定。
 
 实现方式上分为：
 
@@ -26,21 +27,33 @@ MySQL 索引的原理是通过创建一个索引数据结构，将索引列的�
 3. Full-Text 索引：适用于全文搜索，可以快速查找包含特定单词或短语的文本数据。
 4. R-Tree 索引：适用于空间数据查询，例如地理位置数据、图片数据等。
 
-## 操作索引
+## 索引操作
 
 ```sql
 -- 查看索引
 show
-index from 表名;
+    index from 表名;
+
+-- 删除索引
+drop index 索引名 on 表名;
 
 -- 创建单列索引，只能包含一个字段
-create index name_index on table (target_field);
+create index name_index on table_name (target_field);
+
+alter table table_name
+    add index name_index (target_field);
 
 -- 创建唯一索引，只能有一个列
-create unique index age_index on user (age);
+create unique index index_name on table_name (target_field);
+
+alter table table_name
+    add unique index_name (target_field);
 
 -- 复合索引
-create index name_age_index on user (name, age);
+create index index_name on table_name (target_field1, target_field2...);
+
+alter table table_name
+    add index index_name (target_field1, target_field2...);
 
 ```
 
@@ -78,4 +91,6 @@ Hash表，在Java中的HashMap，TreeMap就是Hash表结构，以键值对的形
 1. 索引并不是越多越好，过多的索引可能会影响数据的插入、更新和删除操作的性能，甚至可能导致索引失效。
 2. 对于较小的表或经常进行全表扫描的查询，不应该创建索引，因为这会增加额外的开销，反而会降低查询效率。
 3. 对于经常用于查询的列，应该创建索引，以提高查询效率。
-4. 在设计索引时应该考虑查询的频率、查询条件的复杂度、表的大小等因素，以达到最优的查询性能。**
+4. 在设计索引时应该考虑查询的频率、查询条件的复杂度、表的大小等因素，以达到最优的查询性能。
+5. 索引本身很大
+6. 数据量比较少的表，不建议创建索引
