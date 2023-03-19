@@ -94,3 +94,54 @@ Hash表，在Java中的HashMap，TreeMap就是Hash表结构，以键值对的形
 4. 在设计索引时应该考虑查询的频率、查询条件的复杂度、表的大小等因素，以达到最优的查询性能。
 5. 索引本身很大
 6. 数据量比较少的表，不建议创建索引
+
+# 避免索引失效
+
+- 复合索引，遵循最佳做前缀原则，不要跨列或乱序使用；反之索引失效
+- 不要再索引上进行函数调用、逻辑运算、类型转换等操作，否则索引失效
+- 复合索引，不要使用 `!= 、 <> 、is null、is not null` 运算符，否则自身及右侧索引失效
+- 尽量使用覆盖索引
+- 范围查询 in、between、>、<、>=、<=、可能会导致索引失效
+- like查询，如果以%开头，索引失效
+- 不要使用类型转换，包括隐式转换和显式转换，否则索引失效
+- 不要使用or，否则索引失效
+- exist和in的使用：如果主查询数据集大，则用in。如果子查询结果集大就用exist
+
+# order by优化
+
+- using filesort：表示查询结果需要一次额外的排序；排序有2种算法。
+    - 双路排序：扫描2次磁盘，一次单独扫描排序字段，一次扫描所需查询的其他字段
+    - 单路排序：将排序字段和其他字段一起扫描，然后排序。排序会在buffer中进行，如果buffer不够大，会导致排序失败，这时会使用双路排序。使用 max_length_for_sort_data
+      参数来设置buffer的大小，。如果排序字段的长度超过了这个值，就会使用双路排序。
+- 避免使用select *。使用select *会有一次额外的计算。并且会导致查询结果集变大（如果有些字段你不需要的话）
+- 保证排序字段的一致性，要么都升序，要么都降序
+
+# 慢sql排查
+
+- 可以使用 SHOW VARIABLES LIKE 'slow_query_log' 命令来查看。如果未启用，可以使用 SET GLOBAL slow_query_log = ON 命令来启用它。
+
+- 查看慢查询阈值。可以使用 SHOW VARIABLES LIKE 'long_query_time' 命令来查看。这个值表示超过多少秒的查询将被记录到慢查询日志中。
+
+- 查看慢查询日志文件的位置。可以使用 SHOW VARIABLES LIKE 'slow_query_log_file' 命令来查看。
+
+- 使用mysqldumpslow工具筛选具体的慢查询。例如：可以使用 mysqldumpslow -s t -t 10 /var/log/mysql/slow.log 命令来查看最耗时的10条查询。
+
+# 海量数据分析
+
+- profiles:
+- profile:
+- 全局日志：
+
+profiles是一种性能分析工具，用于分析MySQL服务器的运行情况，包括查询执行时间、锁定等待时间、访问表的次数等，从而帮助用户定位性能瓶颈，优化数据库的性能。
+
+```sql
+-- 查看profiles是否开启
+show variables like '%profiling%';
+-- 开启profiles
+SET profiling = 1;
+-- 查看sql执行情况
+SHOW PROFILES;
+-- 针对某条sql查看执行情况
+SHOW PROFILE ALL FOR QUERY <Query_ID>;
+
+```
