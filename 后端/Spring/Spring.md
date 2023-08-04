@@ -72,6 +72,8 @@ XML文件配置的上下文：
 在扫描过程中，解析出的Bean定义将被注册到Bean工厂中。这些定义包含了Bean的相关信息，如名称、类型、依赖关系等。
 在扫描过程中，对于基于注解的配置，还会解析类中的其他注解，例如@Autowired、@Qualifier等，这些注解会影响Bean的依赖注入过程。
 
+扫描bean定义的核心方法：org.springframework.context.support.PostProcessorRegistrationDelegate#invokeBeanDefinitionRegistryPostProcessors
+
 ## 1.6. 创建所有非懒加载的单例Bean实例：
 
 在Bean定义阶段完成后，Spring会根据定义创建所有非懒加载的单例Bean实例。这意味着这些Bean会在上下文创建时被实例化，并且在整个应用的生命周期中只有一个实例。
@@ -316,3 +318,39 @@ BeanFactory可以管理各种类型的Bean，而FactoryBean专门用于创建某
 的实例。要获取由"MyServiceFactoryBean"创建的"MyService"实例，需要使用"&myService"来获取。
 
 总之，BeanFactory是Spring的核心接口，负责管理Bean的创建和生命周期。而FactoryBean是BeanFactory的一种特殊实现，用于创建和管理特定类型的Bean实例，提供了更高级别的功能和自定义逻辑的能力。
+
+# SpringMVC路由的全过程
+
+路由地址到Controller的方法底层数据结构使用HashMap，key为RequestMappingInfo，value为AbstractHandlerMethodMapping$MappingRegistration内部类对象。
+
+使用反射调用到最终的Controller方法。
+
+在Spring MVC中，当请求经过`javax.servlet.http.HttpServlet#service`方法，到通过反射调用具体Controller方法的整个过程中，Spring MVC会执行以下主要步骤：
+
+1. **请求进入Servlet容器**：当客户端发起HTTP请求时，请求首先进入Servlet容器（如Tomcat），然后Servlet容器根据URL找到匹配的`DispatcherServlet`。
+
+2. **DispatcherServlet处理请求**：`DispatcherServlet`是Spring MVC的前端控制器，所有请求都经过它的处理。`DispatcherServlet`
+   会根据URL映射和HandlerAdapter的选择来决定将请求分派给哪个Controller处理。
+
+3. **HandlerMapping的选择**：`DispatcherServlet`通过`HandlerMapping`来选择合适的Handler(Controller)处理请求。`HandlerMapping`是Spring
+   MVC的接口，可以通过多种方式来配置URL和Handler之间的映射关系，例如`RequestMappingHandlerMapping`、`SimpleUrlHandlerMapping`等。
+
+4. **HandlerAdapter的选择**：`DispatcherServlet`根据请求的处理方式，选择合适的`HandlerAdapter`来处理请求。`HandlerAdapter`是Spring
+   MVC的接口，不同的Handler类型（如基于类的控制器和基于方法的控制器）会有不同的`HandlerAdapter`实现。
+
+5. **参数解析和数据绑定**：一旦选择了合适的Handler(Controller)，`DispatcherServlet`会根据请求的参数和路径变量，通过参数解析器（`HandlerMethodArgumentResolver`
+   ）将请求数据绑定到Controller的方法参数上。
+
+6. **HandlerInterceptor的执行**：在调用Controller方法之前，`DispatcherServlet`会执行注册的`HandlerInterceptor`
+   ，它可以在Controller方法执行前后进行一些预处理和后处理。
+
+7. **Controller方法执行**：`DispatcherServlet`通过反射调用具体的Controller方法，传递之前解析的方法参数。
+
+8. **返回逻辑视图名**：Controller方法处理完请求后，返回一个逻辑视图名（比如"index"、"viewPage"等）。
+
+9. **视**图解析和渲染**：`DispatcherServlet`通过`ViewResolver`将逻辑视图名解析为具体的视图（如JSP、Thymeleaf模板等），然后将视图渲染为HTML。
+
+10. **返回响应**：`DispatcherServlet`将渲染后的HTML作为响应返回给客户端。
+
+需要注意的是，Spring MVC的整个**处理过程是高度可配置的，你可以通过`@RequestMapping`注解、`HandlerMapping`、`HandlerAdapter`、`HandlerInterceptor`
+、`ViewResolver`等来定制请求的处理过程，以满足不同的业务需求。这也是Spring MVC被广泛使用的原因之一，因为它提供了灵活的扩展点，可以方便地进行定制和拓展。
