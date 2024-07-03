@@ -1,0 +1,8 @@
+ts中的never类型，never是任何类型的子类型，也可以赋值给任何类型，但是没有类型可以赋值给never类型，除了never本身和any类型
+
+Symbol作为es6的新特性，它标识一个唯一确定的只，可以转换为字符串或者boolean类型，但反之不行。Symbol类型的值是通过Symbol构造函数创建的。 它作为对象属性时，不能使用点运算符，而是要使用方括号运算符才能访问和修改
+
+- Symbol.for()方法会根据给定的键搜索现有的symbol，如果找到则返回该symbol，否则就新建一个与该键关联的symbol
+- Symbol.keyFor()方法返回一个已登记的Symbol类型值的key
+
+11个内置的Symbol值，指向语言内部使用的方法
