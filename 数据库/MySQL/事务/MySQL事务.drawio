@@ -1,0 +1,40 @@
+<mxfile host="app.diagrams.net" modified="2023-06-11T12:32:25.510Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.43" etag="a1JrdLqpn5kpEW5JiFqR" version="21.3.8" type="device">
+  <diagram name="第 1 页" id="-PHL1--hgzBiMDlTiPbV">
+    <mxGraphModel dx="1014" dy="221" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cAi238NNnY2eAswrxOhC-1" value="事务" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="19" y="206" width="94" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="cAi238NNnY2eAswrxOhC-2" value="锁机制" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-50" y="303" width="94" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="cAi238NNnY2eAswrxOhC-3" value="MVCC" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="84" y="303" width="94" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="cAi238NNnY2eAswrxOhC-4" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;width=3.9382239382239383;endSize=7.182239382239383;endWidth=8.964497041420117;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-13" y="294" as="sourcePoint" />
+            <mxPoint x="27" y="252" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cAi238NNnY2eAswrxOhC-5" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;width=3.9382239382239383;endSize=7.182239382239383;endWidth=8.964497041420117;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="127" y="292" as="sourcePoint" />
+            <mxPoint x="96" y="252" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cAi238NNnY2eAswrxOhC-6" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;width=4.423076923076923;endSize=4.663461538461538;endWidth=8.964497041420117;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="63" y="196" as="sourcePoint" />
+            <mxPoint x="63" y="161" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cAi238NNnY2eAswrxOhC-7" value="并发操作过程中保证数据的隔离性、一致性" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="3" y="109" width="126" height="48.26" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

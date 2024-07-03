@@ -1,4 +1,4 @@
-# 倒计时原理
+# 1 倒计时原理
 
 模拟倒计时的时候可以使用线程休眠的方式
 
@@ -21,7 +21,7 @@ public class Countdown {
 }
 ```
 
-# 显示当前时间原理
+# 2 显示当前时间原理
 
 显示当前时间也可以使用线程休眠指定时间来办到
 
@@ -29,7 +29,7 @@ public class Countdown {
 public class CurrentTime {
     public static void main(String[] args) {
         Date time = new Date(System.currentTimeMillis());
-        while (true){
+        while (true) {
             try {
                 Thread.sleep(1000);
                 System.out.println(new SimpleDateFormat("HH:mm:ss").format(time));
@@ -40,4 +40,16 @@ public class CurrentTime {
         }
     }
 }
+```
+
+# 3 根据属性去除List元素重复
+
+```java
+class Demo {
+    static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> distinctMap = new ConcurrentHashMap<>();
+        return elem -> distinctMap.putIfAbsent(keyExtractor.apply(elem), Boolean.TRUE) == null;
+    }
+}
+
 ```
