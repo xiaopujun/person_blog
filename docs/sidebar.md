@@ -1,15 +1,15 @@
 * 前端
     * JavaScript
-        * [基础语法](前端/Javascript/JavaScript基础.md)
+        * [JavaScript基础](前端/js/js.md)
         * [ES6](前端/ES6.md)
         * [JS工具代码](前端/js工具代码.md)
     * TypeScript
-        * [基础语法](前端/TypeScript/TypeScript.md)
+        * [基础语法](前端/ts/TypeScript.md)
     * 工程化
-        * [Vite](前端/Vite/Vite笔记.md)
+        * [Vite](前端/vite/Vite笔记.md)
         * [Webpack](前端/webpack/深入浅出webpack.md )
     * 可视化
-        * [WebGL](前端/WebGL/WebGL关键点记录.md)
+        * [WebGL](前端/webgl/WebGL关键点记录.md)
     * 框架
         * [React](前端/React.md)
         * [React-Router](前端/React-router.md)
@@ -56,7 +56,11 @@
     * 数据结构
     * 计算机组成原理
     * 计算机网络
-* [分布式](/start)
-* [运维](/deploy_docker)
-* [错误经验](/question)
-* [开源项目](/question)
+* 运维
+    * Docker
+* 错误经验
+* 开源项目
+    * LIGHT CHASER
+    * LIGHT CHASER SERVER
+* 其他
+    * JS常用代码
