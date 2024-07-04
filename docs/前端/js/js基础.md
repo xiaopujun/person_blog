@@ -145,5 +145,4 @@ fetchFromAPI((data) => {
 
 ```
 
-## 什么是Promise、async/await？
-
+## 什么是原型，原型链？
