@@ -1,8 +1,8 @@
 * 前端
     * JavaScript
-        * [JavaScript基础](前端/js/js.md)
-        * [ES6](前端/ES6.md)
-        * [JS工具代码](前端/js工具代码.md)
+        * [JavaScript基础](前端/js/js基础.md)
+        * [事件循环](前端/js/事件循环.md)
+        * [ES6](前端/js/es6.md)
     * TypeScript
         * [基础语法](前端/ts/TypeScript.md)
     * 工程化
