@@ -19,19 +19,6 @@
 ## Java中的线程
 
 
-
-
-# Plain text
-
-```mindmap
-some
-  example
-    content
-  for
-  you
-    to
-    see
-      the
-    file
-      structure
+```xmind preview
+./xmind/多线程.xmind
 ```
