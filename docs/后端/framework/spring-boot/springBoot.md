@@ -5,6 +5,7 @@
 ##### 第二步：引入jar依赖
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -37,6 +38,7 @@ public class HelloMainApplication {
 ##### 第一步：引入maven插件
 
 ```xml
+
 <build>
     <plugins>
         <plugin>
@@ -48,8 +50,6 @@ public class HelloMainApplication {
 ```
 
 ##### 第二步：点击打包
-
-![image-20200112140116829](C:\Users\xiaopu\AppData\Roaming\Typora\typora-user-images\image-20200112140116829.png)
 
 # springboot中yaml文件的基本语法
 
@@ -157,7 +157,8 @@ public class Dog {
 
 @Component：作用是将实体类交给spring容器
 
-@ConfigurationProperties(prefix = "dog")：作用是让springboot将拥有本注解的实体类和配置文件中的相关属性相互绑定，从而实现数据注入，prefix属性的作用就是指明将配置文件中的哪些数据进行绑定，默认从全局配置文件中读取数据
+@ConfigurationProperties(prefix = "dog")
+：作用是让springboot将拥有本注解的实体类和配置文件中的相关属性相互绑定，从而实现数据注入，prefix属性的作用就是指明将配置文件中的哪些数据进行绑定，默认从全局配置文件中读取数据
 
 ###### **配置文件数据清单**
 
@@ -218,13 +219,13 @@ public class Student {
 
 ### 两种注入方式的比较
 
-|                      | @ConfigurationProperties | @Value     |
-| -------------------- | ------------------------ | ---------- |
-| 功能                 | 批量注入配置文件中的属性 | 一个个指定 |
-| 松散绑定（松散语法） | 支持                     | 不支持     |
-| SpEL                 | 不支持                   | 支持       |
-| JSR303数据校验       | 支持                     | 不支持     |
-| 复杂类型封装         | 支持                     | 不支持     |
+|            | @ConfigurationProperties | @Value |
+|------------|--------------------------|--------|
+| 功能         | 批量注入配置文件中的属性             | 一个个指定  |
+| 松散绑定（松散语法） | 支持                       | 不支持    |
+| SpEL       | 不支持                      | 支持     |
+| JSR303数据校验 | 支持                       | 不支持    |
+| 复杂类型封装     | 支持                       | 不支持    |
 
 说明：松散绑定指的是说语法不严格，比如大小写不敏感，或者命名不严格要求，复杂类型封装指的是Value的方式无法封装对象，数组等类型的数据
 
@@ -255,8 +256,6 @@ public class Student {
 
 在需要出入的实体类上贴上此注解即可，读取流程和上面一样
 
-
-
 另一个注解：
 
 @**ImportResource**：导入Spring的配置文件，让配置文件里面的内容生效；
@@ -276,7 +275,8 @@ Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件
 
 ## 过滤web请求
 
-springsecurity通过一系列的Servlet Filter(过滤器)来提供各种安全性功能。因此我们想可能需要在web.xml上或者Java配置类上配置大量的filter，但实际上因为spring的存在，只需配置一个Filter就行了。
+springsecurity通过一系列的Servlet Filter(过滤器)
+来提供各种安全性功能。因此我们想可能需要在web.xml上或者Java配置类上配置大量的filter，但实际上因为spring的存在，只需配置一个Filter就行了。
 
 DelegatingFilterProxy是一个特殊的Filter，本质上是一个代理，也就是说它本身是不做任何功能上的处理的。而是将需要做的工作交给一个javax.servlet.Filter的实现类去做，而这个实现类，就像我们平时在Java配置类中注册的Bean一样，他会放入spring容器中供我们使用。
 
@@ -295,13 +295,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 通过继承WebSecurityConfigurerAdapter类即可实现并覆盖相应的方法即可完成对springsecurity的配置，实际上只要是实现了WebSecurityConfigurer接口的类都能对springsecurity进行配置，而WebSecurityConfigurerAdapter就是这个接口的实现。
 
-对于web应用，我们通常经过重载这三个方法来配置安全属性   
+对于web应用，我们通常经过重载这三个方法来配置安全属性
 
-| 方法                                    | 描述                                             |
-| --------------------------------------- | ------------------------------------------------ |
-| configure(AuthenticationManagerBuilder) | 覆盖此方法：配置用户细节相关的配置               |
-| configure(WebSecurity）                 | 覆盖此方法：配置springsecurity的Filter链         |
-| configure(HttpSecurity)                 | 覆盖此方发：配置拦截器拦截哪些请求和放开哪些请求 |
+| 方法                                      | 描述                             |
+|-----------------------------------------|--------------------------------|
+| configure(AuthenticationManagerBuilder) | 覆盖此方法：配置用户细节相关的配置              |
+| configure(WebSecurity）                  | 覆盖此方法：配置springsecurity的Filter链 |
+| configure(HttpSecurity)                 | 覆盖此方发：配置拦截器拦截哪些请求和放开哪些请求       |
 
 ### 基于内存的用户认证配置
 
@@ -322,20 +322,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 基于内存的用户配置详细方法
 
-| 方法               | 描述                       |
-| ------------------ | -------------------------- |
-| accountExpired     | 定义账号是否已经过期       |
-| accountLocked      | 定义账号是否已经锁定       |
-| and                | 链接配置                   |
+| 方法                 | 描述            |
+|--------------------|---------------|
+| accountExpired     | 定义账号是否已经过期    |
+| accountLocked      | 定义账号是否已经锁定    |
+| and                | 链接配置          |
 | authorities        | 授予某个用户一项或多项权限 |
-| credentialsExpired | 定义凭证是否已经过期       |
-| disabled           | 定义账号是否已经被禁用     |
-| password           | 定义用户密码               |
-| roles              | 赋予用户一项或多项权限     |
+| credentialsExpired | 定义凭证是否已经过期    |
+| disabled           | 定义账号是否已经被禁用   |
+| password           | 定义用户密码        |
+| roles              | 赋予用户一项或多项权限   |
 
 ### 基于数据库的用户认证配置
 
-使用基于数据库的用户认证，只需要我们注入一个数据源即可，spring boot的数据源可以通过yml配置文件配置，spring会识别到它并放入到容器中。也可以通过JavaConfig来显示配置。
+使用基于数据库的用户认证，只需要我们注入一个数据源即可，spring
+boot的数据源可以通过yml配置文件配置，spring会识别到它并放入到容器中。也可以通过JavaConfig来显示配置。
 
 这样一个默认的基于配置数据库的数据认证就可以了，此时是默认的配置，也就是说你需要在数据库中有和他对应的表，字段要一样，这样它才能自动从数据库中查询到用户信息并认证成功。
 
@@ -358,7 +359,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 #### 默认配置的查询语句
 
-当你只配置了数据源的时候，他会使用如下的sql语句来查询 
+当你只配置了数据源的时候，他会使用如下的sql语句来查询
 
 - 查询用户
 
@@ -431,7 +432,7 @@ auth.jdbcAuthentication()
 
 passwordEncoder()方法可以接收springsecurity中PasswordEncoder接口的任意实现，springsecurity加密模块一共包含了三个这样的实现。
 
-- BCryptPasswordEncoder	
+- BCryptPasswordEncoder
 - NoOpPasswordEncoder
 - StandardPasswordEncoder
 
@@ -463,25 +464,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 antMatcher()方法是匹配需要保护的路径必须使用的方法。antMatchers()方法中的路径支持通配符和正则表达式
 
-除了路径选择方法antMatchers()，还能通过authenticated()方法来要求这个路径必须是经过认证的用户才能访问。而permitAll()方法则可以放开权限让所有用户都能访问。
+除了路径选择方法antMatchers()，还能通过authenticated()方法来要求这个路径必须是经过认证的用户才能访问。而permitAll()
+方法则可以放开权限让所有用户都能访问。
 
 除了以上方法，还有其他方法来对路径拦截进行规范。列表如下：
 
-| 方法                          | 描述                                               |
-| ----------------------------- | -------------------------------------------------- |
-| access(String)                | 给定的SpEL表达式计算结果为true，就允许访问         |
-| anonymous()                   | 允许匿名用户访问                                   |
-| authenticated()               | 允许认证过的用户访问                               |
-| denyAll()                     | 无条件拒绝所有访问                                 |
+| 方法                            | 描述                             |
+|-------------------------------|--------------------------------|
+| access(String)                | 给定的SpEL表达式计算结果为true，就允许访问      |
+| anonymous()                   | 允许匿名用户访问                       |
+| authenticated()               | 允许认证过的用户访问                     |
+| denyAll()                     | 无条件拒绝所有访问                      |
 | fullyAuthenticated()          | 如果用户是完整的认证（不通过rememberMe）就允许访问 |
-| hasAnyAuthority(String . . .) | 如果用户具备给定全险中的某一个，就允许访问         |
-| hasAnyRole(String . . .)      | 如果用户具备给定角色中的某一个，就允许访问         |
-| hasAuthority(String)          | 如果用户具备给定权限，就允许访问                   |
-| hasIpAddress(String)          | 如果用户具备给定的ip地址，就允许访问               |
-| hasRoles(String)              | 如果用户具备给定的角色，允许访问                   |
-| not()                         | 对其他方法的结果求反                               |
-| permitAll()                   | 无条件允许所有访问                                 |
-| rememberMe()                  | 如果是通过rememberMe功能进行认证的，允许访问。     |
+| hasAnyAuthority(String . . .) | 如果用户具备给定全险中的某一个，就允许访问          |
+| hasAnyRole(String . . .)      | 如果用户具备给定角色中的某一个，就允许访问          |
+| hasAuthority(String)          | 如果用户具备给定权限，就允许访问               |
+| hasIpAddress(String)          | 如果用户具备给定的ip地址，就允许访问            |
+| hasRoles(String)              | 如果用户具备给定的角色，允许访问               |
+| not()                         | 对其他方法的结果求反                     |
+| permitAll()                   | 无条件允许所有访问                      |
+| rememberMe()                  | 如果是通过rememberMe功能进行认证的，允许访问。   |
 
 配置原则：越具体的路径配置在最前面，越不具体的路径，配置在最后面，防止后面的覆盖前面的配置而失效。
 
@@ -509,7 +511,8 @@ public void configure(HttpSecurity http) throws Exception{
 
 ### 默认登录页面
 
-如果我们使用了springsecurity的默认配置的，并且没有重写configure(HttpSecurity）方法，那么springsecurity会为我们提供一个默认的登录页面，尽管不好看，但是比较有效。
+如果我们使用了springsecurity的默认配置的，并且没有重写configure(
+HttpSecurity）方法，那么springsecurity会为我们提供一个默认的登录页面，尽管不好看，但是比较有效。
 
 但是一旦我们重写了configure(HttpSecurity）方法，这个默认页面就消失了。不过我们仍然可以找回来
 
@@ -535,7 +538,8 @@ public void configure(HttpSecurity http) throws Exception{
 }
 ```
 
-使用usernameParameter()方法可以设置接收用户名的key值，使用passwordParameter()方法指定接收password的key值，这里设置的值要和前端表单中的name属性一致，但是也不要混淆，这里是接收前端的值，验证数据库中的值使用的字段还是username或者你自己自定义的名字，两者并不冲突。
+使用usernameParameter()方法可以设置接收用户名的key值，使用passwordParameter()
+方法指定接收password的key值，这里设置的值要和前端表单中的name属性一致，但是也不要混淆，这里是接收前端的值，验证数据库中的值使用的字段还是username或者你自己自定义的名字，两者并不冲突。
 
 ```java
 @Override
@@ -582,6 +586,7 @@ public void configure(HttpSecurity http) throws Exception{
 整合之前需要导入整合包，版本自己控制
 
 ```xml
+
 <dependency>
     <groupId>org.thymeleaf.extras</groupId>
     <artifactId>thymeleaf-extras-springsecurity4</artifactId>
