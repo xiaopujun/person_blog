@@ -20,5 +20,5 @@
 
 
 ```xmind preview
-./xmind/多线程.xmind
+./xmind/多线程学习路线.xmind
 ```
