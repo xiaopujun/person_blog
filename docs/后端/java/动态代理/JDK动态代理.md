@@ -1,5 +1,3 @@
 ## JDK动态代理
 
-```xmind preview
-./xmind/JDK动态代理.xmind
-```
+![JDK动态代理大纲](JDK动态代理.png)
