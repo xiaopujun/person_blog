@@ -1,8 +1,14 @@
+```xmind preview
+./xmind/Spring.xmind
+```
+
 **浅谈对spring框架的理解：**
 
-​	spring框架是一整个生态链工程，其中衍生出来很多具体型的框架，但是纠其核心内容，一个就是Di（依赖注入），一个是AOP（面向切面）。而我的理解，这两个核心又来自于Java语言自身的特性，由于Java支撑接口等解耦式的编程模型，这为spring的强大功能提供了保障。
+​
+spring框架是一整个生态链工程，其中衍生出来很多具体型的框架，但是纠其核心内容，一个就是Di（依赖注入），一个是AOP（面向切面）。而我的理解，这两个核心又来自于Java语言自身的特性，由于Java支撑接口等解耦式的编程模型，这为spring的强大功能提供了保障。
 
-​	对于spring的学习，首先应该有良好的Java基础，在学习spring的DI内容时，应该对Java的接口和继承等知识了解透彻，而学习AOP的时候，除了DI的基础知识，Java的代理也是一个需要掌握的重点，我认为，将这两点把握住，对学习spring框架有着极其重要的影响。
+​
+对于spring的学习，首先应该有良好的Java基础，在学习spring的DI内容时，应该对Java的接口和继承等知识了解透彻，而学习AOP的时候，除了DI的基础知识，Java的代理也是一个需要掌握的重点，我认为，将这两点把握住，对学习spring框架有着极其重要的影响。
 
 前言：经过学习之后，在spring的诸多配置中，我更加喜欢基于Java配置类的配置，和spring自动装配，这两着简洁明了。让我彻底不再想用原来的XML配置文件配置，所以，本笔记中暂时对基于XML的配置不进行记录，如果后面时间多，会补充上来。
 
@@ -10,7 +16,8 @@
 
 spring容器简单理解就是一个大的盆，或者一个大缸，里面装满了Java对象，并且建立维护好了这些对象之间的关系，而在我们需要使用这些对象的时候，就不用再用new关键字来创建了，而实直接从这个大缸里面取，然后直接用就行了。
 
-spring的容器有很多，并不止一个，spring框架有很多的容器实现，但是就分类而言，可以归纳为两种不同的类型，bean工厂就是最简单的容器，提供了基本的依赖注入（DI）功能，**应用上下文**是基于bean工厂而来的，提供了框架级别的服务。
+spring的容器有很多，并不止一个，spring框架有很多的容器实现，但是就分类而言，可以归纳为两种不同的类型，bean工厂就是最简单的容器，提供了基本的依赖注入（DI）功能，
+**应用上下文**是基于bean工厂而来的，提供了框架级别的服务。
 
 所以简单来讲，spring的容器有两种
 
@@ -19,13 +26,13 @@ spring的容器有很多，并不止一个，spring框架有很多的容器实�
 
 spring中的应用上下文又有多种，下面是可能遇见的
 
-| 上下文                                | 解释                                              |
-| :------------------------------------ | ------------------------------------------------- |
-| AnnotationConfigApplicationContext    | 从Java配置类中加载spring应用上下文（容器）        |
-| AnnotationConfigWebApplicationContext | 从Java配置类中加载springWeb应用上下文（容器）     |
-| ClassPathXmlApplicationContext        | 从类路径下的xml配置文件中加载应用上下文（容器）   |
-| FileSystemXmlApplicationContext       | 从文件系统下的xml配置文件中加载应用上下文（容器） |
-| XmlWebApplicationContext              | 从web应用下的xml配置文件中加载应用上下文（容器）  |
+| 上下文                                   | 解释                            |
+|:--------------------------------------|-------------------------------|
+| AnnotationConfigApplicationContext    | 从Java配置类中加载spring应用上下文（容器）    |
+| AnnotationConfigWebApplicationContext | 从Java配置类中加载springWeb应用上下文（容器） |
+| ClassPathXmlApplicationContext        | 从类路径下的xml配置文件中加载应用上下文（容器）     |
+| FileSystemXmlApplicationContext       | 从文件系统下的xml配置文件中加载应用上下文（容器）    |
+| XmlWebApplicationContext              | 从web应用下的xml配置文件中加载应用上下文（容器）   |
 
 不管是从哪里加载spring上下文（容器）将对象bean加载到bean工厂的过程基本都是一致的。
 
@@ -73,22 +80,20 @@ spring框架发展至今，已经形成了多个模块，开发者可以自由�
 
 就spring模块而言基本分为下面6个模块
 
-| 模块            | 说明                                       |
-| --------------- | ------------------------------------------ |
-| 数据访问与集成  | 用于持久层的操作，如访问数据库，关系映射等 |
-| Web与远程调用   | 主要用于web应用的开发                      |
-| 面向切面编程    | 切面                                       |
-| instrumentation | 为jvm添加代理                              |
-| spring核心容器  | 依赖注入、控制反转                         |
-| 测试            | spring测试                                 |
-
-
+| 模块              | 说明                    |
+|-----------------|-----------------------|
+| 数据访问与集成         | 用于持久层的操作，如访问数据库，关系映射等 |
+| Web与远程调用        | 主要用于web应用的开发          |
+| 面向切面编程          | 切面                    |
+| instrumentation | 为jvm添加代理              |
+| spring核心容器      | 依赖注入、控制反转             |
+| 测试              | spring测试              |
 
 # 如何装配Bean
 
-​	要装配bean，首先应该知道bean应该要装到哪里去，在spring中容纳bean（也就是对象实例）的东西叫容器。容器是spring的核心，容器里面装着各种各样的对象实例Bean。
+​ 要装配bean，首先应该知道bean应该要装到哪里去，在spring中容纳bean（也就是对象实例）的东西叫容器。容器是spring的核心，容器里面装着各种各样的对象实例Bean。
 
-​	spring的容器总体来讲有两个类型，一个是bean工厂，另一个是应用上下文（或者叫应用环境）ApplicationContext。我们常用的是应用上下文这个容器。
+​ spring的容器总体来讲有两个类型，一个是bean工厂，另一个是应用上下文（或者叫应用环境）ApplicationContext。我们常用的是应用上下文这个容器。
 
 ### 装配Bean的三种方式
 
@@ -164,8 +169,6 @@ public class AppConfig {
 }	
 ```
 
-
-
 *第二步：标注需要加入容器的类*
 
 ```java
@@ -182,19 +185,19 @@ public class Dance implements Performance {
 
 spring应用上下文会给所有的bean都分配一个id，作为这个对象实例的唯一标识，当我们没有明确的指定这个id的时候，spring会自动为其分配一个id
 
-| 情况                              | 措施                                 |
-| --------------------------------- | ------------------------------------ |
-| 在xml配置文件中没有明确指定beanID | spring会以全限定类名写作为BeanID     |
+| 情况                    | 措施                       |
+|-----------------------|--------------------------|
+| 在xml配置文件中没有明确指定beanID | spring会以全限定类名写作为BeanID   |
 | 在组件扫描中没有明确指定BeanID    | spring会以类名的首字母小写作为BeanID |
-| 在Java配置类中没有明确指定BeanID  | spring会以方法名作为BeanID           |
+| 在Java配置类中没有明确指定BeanID | spring会以方法名作为BeanID      |
 
 **如果想自定义beanID**
 
-| 情况            | 措施                                      |
-| --------------- | ----------------------------------------- |
-| 在组件扫描中    | 指定@Component的值：@Component("person")  |
+| 情况        | 措施                                  |
+|-----------|-------------------------------------|
+| 在组件扫描中    | 指定@Component的值：@Component("person") |
 | 在xml配置文件中 | 指定bean的id属性 ：id="person"            |
-| 在Java配置类中  | 指定@Bean注解的值：@Bean（name=“person”） |
+| 在Java配置类中 | 指定@Bean注解的值：@Bean（name=“person”）    |
 
 spring还支持使用@Name来为bean（对象实例）命名，用法：@Name（“person”），但是此方法基本不使用。
 
@@ -264,7 +267,8 @@ public class AopConfig {
 }
 ```
 
-如上代码，当spring加载这个配置类的时候就会把创建的对象实例，作为组件，放入到spring容器中。默认情况下，这里创建的bean的名称ID为方法名，但是我们也可以自己指定名称ID。**（在上面的表格中有详细归纳）**
+如上代码，当spring加载这个配置类的时候就会把创建的对象实例，作为组件，放入到spring容器中。默认情况下，这里创建的bean的名称ID为方法名，但是我们也可以自己指定名称ID。
+**（在上面的表格中有详细归纳）**
 
 ```
 @Bean(name = "dance")
@@ -367,7 +371,8 @@ public class AppConfig {
 
 如上就声明了一个最简单的，以XML配置文件形式装配的bean实例
 
-这里没有明确指定bean的id，所以默认情况下，会以类的全限定名称，也就是：com.ctbu.xmlconfigtest.domain.Person 作为bean的默认id，但是这太麻烦了，每一次引用难道都要写这么大一串？
+这里没有明确指定bean的id，所以默认情况下，会以类的全限定名称，也就是：com.ctbu.xmlconfigtest.domain.Person
+作为bean的默认id，但是这太麻烦了，每一次引用难道都要写这么大一串？
 
 因此，可以使用id属性指定bean的id；
 
@@ -597,7 +602,7 @@ XML配置文件中也会存在要配置对象引用的时候，这个使用有�
     <bean id="person" class="com.ctbu.xmlconfigtest.domain.Person">
         <property name="work" ref="work"/>
     </bean>
-    
+
     <bean id="work" class="com.ctbu.xmlconfigtest.domain.Work"/>
 
 </beans>
@@ -720,7 +725,7 @@ public class AppConfig {
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
+
     <bean class="com.ctbu.source_merge.config.AppConfig"/>
 </beans>
 ```
@@ -734,6 +739,7 @@ public class AppConfig {
 spring的测试仍然需要junit的支持，所以需要引入依赖
 
 ```xml
+
 <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
@@ -877,6 +883,7 @@ active的优先级高于default，当配置了active的时候，会优先使用�
 在web应用中使用web.xml进行激活
 
 ```xml
+
 <context-param>
     <param-name>spring.profiles.active</param-name>
     <param-value>dev</param-value>
@@ -922,7 +929,7 @@ spring aop功能是spring框架的核心功能之一，他能在不改变源代�
 - 通知：简单理解就是要插入的功能。通知分为5
 
   | 通知类型 | 说明                                                         |
-  | -------- | ------------------------------------------------------------ |
+    | -------- | ------------------------------------------------------------ |
   | 前置通知 | 在目标方法被调用之前调用通知方法                             |
   | 后置通知 | 在目标方法被调用之后调用通知方法                             |
   | 返回通知 | 在目标方法成功执行之后调用通知方法                           |
@@ -954,17 +961,17 @@ spring框架提供了4种类型的AOP支持
 
 通过指示器，我们可以自定义spring中的切面
 
-| AspectJ指示器 | 说明                                                         |
-| ------------- | ------------------------------------------------------------ |
-| arg()         | 限制连接点匹配参数为指定类型的执行方法                       |
-| @args()       | 限制连接点匹配参数由指定注解标注的执行方法                   |
-| execution     | 用于匹配是连接点的执行方法                                   |
-| this()        | 限制连接点匹配AOP代理的bean引用为指定类型的类                |
-| target        | 限制连接点匹配目标对象为指定类型的类                         |
-| @target()     | 限制连接点匹配特定的执行对象。这些对象对应的类要具有指定类型的注解。 |
-| within()      | 限制连接点匹配指定的类型。                                   |
-| @within()     | 限制连接点匹配指定注解所标注的类型。当使用spring AOP时，方法定义在由指定的注解所标注的类里。 |
-| @annotation   | 限定匹配带有指定注解的连接点。                               |
+| AspectJ指示器  | 说明                                                  |
+|-------------|-----------------------------------------------------|
+| arg()       | 限制连接点匹配参数为指定类型的执行方法                                 |
+| @args()     | 限制连接点匹配参数由指定注解标注的执行方法                               |
+| execution   | 用于匹配是连接点的执行方法                                       |
+| this()      | 限制连接点匹配AOP代理的bean引用为指定类型的类                          |
+| target      | 限制连接点匹配目标对象为指定类型的类                                  |
+| @target()   | 限制连接点匹配特定的执行对象。这些对象对应的类要具有指定类型的注解。                  |
+| within()    | 限制连接点匹配指定的类型。                                       |
+| @within()   | 限制连接点匹配指定注解所标注的类型。当使用spring AOP时，方法定义在由指定的注解所标注的类里。 |
+| @annotation | 限定匹配带有指定注解的连接点。                                     |
 
 以上的匹配器中，只有execution指示器是用类执行匹配工作的，其他指示器都是用来限制匹配的。
 
@@ -986,7 +993,8 @@ execution表示在目标方法执行时出发此切面
 execution(* com.ctbu.spring.aop.test.impl.AopImpl.pay(..)) && within(test.*)
 ```
 
-若限制条件不够，可以使用”&&“来连接其他的表达式，比如这里就限定了匹配的范围为 test包下的所有能匹配的方法。同样可以使用”||“来表示或，用” ！“表示非的关系。在XML中由于&有特殊的含义，因此链接表达式可以使用”and“、”or“、”not“来替换。
+若限制条件不够，可以使用”&&“来连接其他的表达式，比如这里就限定了匹配的范围为 test包下的所有能匹配的方法。同样可以使用”||“来表示或，用”
+！“表示非的关系。在XML中由于&有特殊的含义，因此链接表达式可以使用”and“、”or“、”not“来替换。
 
 除了以上指示器，我们还有一种方法，可以具体到Bean的Id上，以此匹配到特定的Bean上。
 
@@ -1004,13 +1012,13 @@ execution(* com.ctbu.spring.aop.test.impl.AopImpl.pay(..))&& !bean(aopImpl)
 
 ## 使用注解声明切面
 
-| 注解            | 通知                   |
-| --------------- | ---------------------- |
-| @After          | 后置通知               |
-| @Before         | 前置通知               |
-| @AfterReturning | 目标方法返回后调用     |
+| 注解              | 通知          |
+|-----------------|-------------|
+| @After          | 后置通知        |
+| @Before         | 前置通知        |
+| @AfterReturning | 目标方法返回后调用   |
 | @AfterThrowing  | 目标方法抛出异常后调用 |
-| @Around         | 环绕通知               |
+| @Around         | 环绕通知        |
 
 ### @Aspect
 
@@ -1019,6 +1027,7 @@ execution(* com.ctbu.spring.aop.test.impl.AopImpl.pay(..))&& !bean(aopImpl)
 使用此注解除了spring aop的依赖还需要引入aspect项目中的依赖
 
 ```xml
+
 <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-aspects</artifactId>
@@ -1193,7 +1202,8 @@ public class Dog {
 
 @Component：作用是将实体类交给spring容器
 
-@ConfigurationProperties(prefix = "dog")：作用是让springboot将拥有本注解的实体类和配置文件中的相关属性相互绑定，从而实现数据注入，prefix属性的作用就是指明将配置文件中的哪些数据进行绑定，默认从全局配置文件中读取数据
+@ConfigurationProperties(prefix = "dog")
+：作用是让springboot将拥有本注解的实体类和配置文件中的相关属性相互绑定，从而实现数据注入，prefix属性的作用就是指明将配置文件中的哪些数据进行绑定，默认从全局配置文件中读取数据
 
 ###### **配置文件数据清单**
 
@@ -1254,13 +1264,13 @@ public class Student {
 
 ### 两种注入方式的比较
 
-|                      | @ConfigurationProperties | @Value     |
-| -------------------- | ------------------------ | ---------- |
-| 功能                 | 批量注入配置文件中的属性 | 一个个指定 |
-| 松散绑定（松散语法） | 支持                     | 不支持     |
-| SpEL                 | 不支持                   | 支持       |
-| JSR303数据校验       | 支持                     | 不支持     |
-| 复杂类型封装         | 支持                     | 不支持     |
+|            | @ConfigurationProperties | @Value |
+|------------|--------------------------|--------|
+| 功能         | 批量注入配置文件中的属性             | 一个个指定  |
+| 松散绑定（松散语法） | 支持                       | 不支持    |
+| SpEL       | 不支持                      | 支持     |
+| JSR303数据校验 | 支持                       | 不支持    |
+| 复杂类型封装     | 支持                       | 不支持    |
 
 说明：松散绑定指的是说语法不严格，比如大小写不敏感，或者命名不严格要求，复杂类型封装指的是Value的方式无法封装对象，数组等类型的数据
 
@@ -1290,8 +1300,6 @@ public class Student {
 需要的注解：@PropertySource，默认支持.properties类型的配置文件，不支持yml，需要自己设置
 
 在需要出入的实体类上贴上此注解即可，读取流程和上面一样
-
-
 
 另一个注解：
 

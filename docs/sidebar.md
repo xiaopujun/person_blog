@@ -28,7 +28,7 @@
     * 框架
         * [SpringBoot](后端/framework/spring-boot/springBoot.md)
         * SpringCloud
-        * Spring
+        * [Spring](后端/framework/spring/spring.md)
     * 工具
       [Maven](后端/tool/Maven.md)
 * 数据库

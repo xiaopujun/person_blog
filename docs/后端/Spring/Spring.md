@@ -1,4 +1,6 @@
+
 # 一、spring启动的整个过程
+
 
 核心代码位置 org.springframework.context.support.AbstractApplicationContext#refresh
 
@@ -84,7 +86,8 @@ XML文件配置的上下文：
 
 在实例化Bean时，如果Bean存在依赖关系，则会先实例化依赖的Bean，并将其注入到目标Bean中。
 
-在创建Bean实例时，如果Bean实现了FactoryBean接口，那么会调用FactoryBean的getObject()方法来创建Bean实例。另外，在实例化Bean时，还会处理Bean的循环依赖问题，例如A依赖B，B依赖A。
+在创建Bean实例时，如果Bean实现了FactoryBean接口，那么会调用FactoryBean的getObject()
+方法来创建Bean实例。另外，在实例化Bean时，还会处理Bean的循环依赖问题，例如A依赖B，B依赖A。
 
 ## 1.7. 执行Bean的初始化方法：
 
@@ -92,7 +95,8 @@ XML文件配置的上下文：
 方法。在初始化方法中，您可以执行一些自定义的逻辑，例如初始化资源、建立连接等。
 
 在执行Bean的初始化方法之前，还会执行BeanPostProcessor的postProcessBeforeInitialization()
-方法，这些方法可以对Bean实例进行一些预处理操作。在执行初始化方法之后，还会执行BeanPostProcessor的postProcessAfterInitialization()方法，这些方法可以对Bean实例进行一些后处理操作。
+方法，这些方法可以对Bean实例进行一些预处理操作。在执行初始化方法之后，还会执行BeanPostProcessor的postProcessAfterInitialization()
+方法，这些方法可以对Bean实例进行一些后处理操作。
 
 ## 1.8. 完成Spring上下文的创建：
 
@@ -132,7 +136,8 @@ public class B {
 
 当Spring容器启动时，它会读取配置元数据并扫描应用程序中的所有类。当它发现带有@Component注解的类时，它会将这些类注册为bean。在这个过程中，Spring容器会创建一个BeanDefinition对象来存储有关bean的信息。
 
-接下来，当您第一次调用getBean()方法或者当ApplicationContext启动时，IoC容器会触发依赖注入并将bean实例放入缓存中。在这个过程中，Spring容器会实例化bean并根据配置元数据进行依赖注入。
+接下来，当您第一次调用getBean()
+方法或者当ApplicationContext启动时，IoC容器会触发依赖注入并将bean实例放入缓存中。在这个过程中，Spring容器会实例化bean并根据配置元数据进行依赖注入。
 
 在您提供的代码中，当Spring容器实例化A类时，它会发现A类依赖于B类。因此，它会先实例化B类，并将其注入到A类中。同样，当Spring容器实例化B类时，它会发现B类依赖于A类。因此，它会先实例化A类，并将其注入到B类中。
 
@@ -163,7 +168,8 @@ singletonFactories：这是一个用于存储单例bean工厂的缓存。当一�
 当Spring容器检测到循环依赖时，它会使用三级缓存来解决这个问题。具体来说，当Spring容器实例化一个单例bean但尚未完全初始化它时，它会将这个bean的工厂存储在singletonFactories缓存中。然后，当另一个bean需要注入这个bean时，Spring容器会从singletonFactories缓存中获取这个bean的工厂，并使用它来创建一个早期的bean实例。接着，Spring容器会将这个早期的bean实例存储在earlySingletonObjects缓存中，并将其注入到另一个bean中。
 
 
-> “但是，Spring解决循环依赖是有一定限制的，首先就是要求互相依赖的Bean必须要是单例的Bean，另外就是依赖注入的方式不能都是构造函数注入的方式。” 为什么无法解决都是构造函数注入的方式的循环依赖？
+> “但是，Spring解决循环依赖是有一定限制的，首先就是要求互相依赖的Bean必须要是单例的Bean，另外就是依赖注入的方式不能都是构造函数注入的方式。”
+> 为什么无法解决都是构造函数注入的方式的循环依赖？
 
 当两个Bean都是通过构造函数注入对方时，Spring无法解决循环依赖问题。这是因为在构造函数注入时，Bean的实例化必须在构造函数执行完成后才能完成。如果两个Bean都是通过构造函数注入对方，那么它们都需要等待对方的实例化完成才能完成自己的实例化，从而导致循环依赖的问题1。
 
@@ -206,19 +212,25 @@ public class B {
 
 4. 在实例化Bean B时，Spring会发现它依赖于Bean A。由于Bean A已经在singletonsCurrentlyInCreation集合中，因此Spring知道存在循环依赖。
 
-5. 此时，Spring会尝试通过三级缓存来解决循环依赖的问题。首先，它会检查一级缓存singletonObjects中是否存在Bean A的实例。由于Bean A还没有被完全实例化，因此一级缓存中不会存在Bean A的实例。
+5. 此时，Spring会尝试通过三级缓存来解决循环依赖的问题。首先，它会检查一级缓存singletonObjects中是否存在Bean A的实例。由于Bean
+   A还没有被完全实例化，因此一级缓存中不会存在Bean A的实例。
 
-6. 接下来，Spring会检查二级缓存earlySingletonObjects中是否存在Bean A的实例。由于这是第一次检查二级缓存，因此二级缓存中也不会存在Bean A的实例。
+6. 接下来，Spring会检查二级缓存earlySingletonObjects中是否存在Bean A的实例。由于这是第一次检查二级缓存，因此二级缓存中也不会存在Bean
+   A的实例。
 
-7. 然后，Spring会检查三级缓存singletonFactories中是否存在一个可以创建Bean A实例的工厂对象。由于这是第一次检查三级缓存，因此三级缓存中也不会存在可以创建Bean A实例的工厂对象。
+7. 然后，Spring会检查三级缓存singletonFactories中是否存在一个可以创建Bean A实例的工厂对象。由于这是第一次检查三级缓存，因此三级缓存中也不会存在可以创建Bean
+   A实例的工厂对象。
 
-8. 由于三级缓存中不存在可以创建Bean A实例的工厂对象，因此Spring会创建一个不完整的Bean A实例（即只调用了构造函数但还没有完成依赖注入），并将一个可以返回该不完整实例的工厂对象添加到三级缓存中。
+8. 由于三级缓存中不存在可以创建Bean A实例的工厂对象，因此Spring会创建一个不完整的Bean
+   A实例（即只调用了构造函数但还没有完成依赖注入），并将一个可以返回该不完整实例的工厂对象添加到三级缓存中。
 
-9. 接下来，Spring会继续实例化Bean B。在完成依赖注入时，它会再次检查三级缓存，并发现可以创建Bean A实例的工厂对象。因此，它会使用该工厂对象获取到不完整的Bean A实例，并完成对Bean B的依赖注入。
+9. 接下来，Spring会继续实例化Bean B。在完成依赖注入时，它会再次检查三级缓存，并发现可以创建Bean
+   A实例的工厂对象。因此，它会使用该工厂对象获取到不完整的Bean A实例，并完成对Bean B的依赖注入。
 
 10.在完成对Bean B的依赖注入后，Spring会将完整的Bean B实例添加到一级缓存中，并从singletonsCurrentlyInCreation集合中移除。
 
-11. 接下来，Spring会继续完成对Bean A的依赖注入。在完成依赖注入时，它会从一级缓存中获取到完整的Bean B实例，并完成对Bean A的依赖注入。
+11. 接下来，Spring会继续完成对Bean A的依赖注入。在完成依赖注入时，它会从一级缓存中获取到完整的Bean B实例，并完成对Bean
+    A的依赖注入。
 
 12. 在完成对Bean A的依赖注入后，Spring会将完整的Bean A实例添加到一级缓存中，并从singletonsCurrentlyInCreation集合中移除。
 
@@ -281,19 +293,25 @@ class DemoService {
 
 PROPAGATION_REQUIRED：
 
-如果A方法在事务中执行，那么B方法会加入A方法的事务中执行。 如果A方法不在事务中执行，那么B方法会新建一个事务并在其中执行。 PROPAGATION_SUPPORTS：
+如果A方法在事务中执行，那么B方法会加入A方法的事务中执行。 如果A方法不在事务中执行，那么B方法会新建一个事务并在其中执行。
+PROPAGATION_SUPPORTS：
 
-如果A方法在事务中执行，那么B方法会加入A方法的事务中执行。 如果A方法不在事务中执行，那么B方法也不在事务中执行。 PROPAGATION_MANDATORY：
+如果A方法在事务中执行，那么B方法会加入A方法的事务中执行。 如果A方法不在事务中执行，那么B方法也不在事务中执行。
+PROPAGATION_MANDATORY：
 
-如果A方法在事务中执行，那么B方法会加入A方法的事务中执行。 如果A方法不在事务中执行，那么B方法会抛出异常。 PROPAGATION_REQUIRES_NEW：
+如果A方法在事务中执行，那么B方法会加入A方法的事务中执行。 如果A方法不在事务中执行，那么B方法会抛出异常。
+PROPAGATION_REQUIRES_NEW：
 
-无论A方法是否在事务中执行，B方法都会新建一个事务并在其中执行。如果A方法在事务中执行，那么A方法的事务会被暂停，直到B方法的事务完成。 PROPAGATION_NOT_SUPPORTED：
+无论A方法是否在事务中执行，B方法都会新建一个事务并在其中执行。如果A方法在事务中执行，那么A方法的事务会被暂停，直到B方法的事务完成。
+PROPAGATION_NOT_SUPPORTED：
 
-无论A方法是否在事务中执行，B方法都不在事务中执行。如果A方法在事务中执行，那么A方法的事务会被暂停，直到B方法完成。 PROPAGATION_NEVER：
+无论A方法是否在事务中执行，B方法都不在事务中执行。如果A方法在事务中执行，那么A方法的事务会被暂停，直到B方法完成。
+PROPAGATION_NEVER：
 
 如果A方法不在事务中执行，那么B方法也不在事务中执行。 如果A方法在事务中执行，那么B方法会抛出异常。 PROPAGATION_NESTED：
 
-如果A方法在事务中执行，那么B方法会在一个嵌套事务中执行。嵌套事务是一个子事务，它可以独立于父事务进行提交或回滚。 如果A方法不在事务中执行，那么B方法会新建一个事务并在其中执行。 以上就是根据不同的传播行为，A调用B时可能出现的各种情况。
+如果A方法在事务中执行，那么B方法会在一个嵌套事务中执行。嵌套事务是一个子事务，它可以独立于父事务进行提交或回滚。
+如果A方法不在事务中执行，那么B方法会新建一个事务并在其中执行。 以上就是根据不同的传播行为，A调用B时可能出现的各种情况。
 
 # 三、BeanFactory和FactroyBean的关系？
 
@@ -313,8 +331,10 @@ BeanFactory是Spring框架的核心接口之一，用于管理和获取Bean实�
 FactoryBean是一个特殊的Bean，实现了FactoryBean接口，用于创建和管理特定类型的Bean实例，它本身也是一个Bean。
 BeanFactory是Spring框架的一部分，负责整个Bean的生命周期和管理。而FactoryBean是BeanFactory的一种实现方式，它是在BeanFactory的基础上提供了更高级别的功能和扩展性。
 BeanFactory可以管理各种类型的Bean，而FactoryBean专门用于创建某一特定类型的Bean。
-当从容器中获取FactoryBean类型的Bean时，会得到FactoryBean的实例本身，而不是通过FactoryBean创建的Bean实例。如果想获取FactoryBean创建的Bean实例，需要在Bean名称前加上"&"前缀。
-例如，考虑一个名为"MyServiceFactoryBean"的FactoryBean实现，它创建类型为"MyService"的Bean实例。当从容器中获取"MyService"时，实际上会得到"MyServiceFactoryBean"
+当从容器中获取FactoryBean类型的Bean时，会得到FactoryBean的实例本身，而不是通过FactoryBean创建的Bean实例。如果想获取FactoryBean创建的Bean实例，需要在Bean名称前加上"&"
+前缀。
+例如，考虑一个名为"MyServiceFactoryBean"的FactoryBean实现，它创建类型为"MyService"的Bean实例。当从容器中获取"MyService"
+时，实际上会得到"MyServiceFactoryBean"
 的实例。要获取由"MyServiceFactoryBean"创建的"MyService"实例，需要使用"&myService"来获取。
 
 总之，BeanFactory是Spring的核心接口，负责管理Bean的创建和生命周期。而FactoryBean是BeanFactory的一种特殊实现，用于创建和管理特定类型的Bean实例，提供了更高级别的功能和自定义逻辑的能力。
@@ -325,20 +345,26 @@ BeanFactory可以管理各种类型的Bean，而FactoryBean专门用于创建某
 
 使用反射调用到最终的Controller方法。
 
-在Spring MVC中，当请求经过`javax.servlet.http.HttpServlet#service`方法，到通过反射调用具体Controller方法的整个过程中，Spring MVC会执行以下主要步骤：
+在Spring MVC中，当请求经过`javax.servlet.http.HttpServlet#service`方法，到通过反射调用具体Controller方法的整个过程中，Spring
+MVC会执行以下主要步骤：
 
-1. **请求进入Servlet容器**：当客户端发起HTTP请求时，请求首先进入Servlet容器（如Tomcat），然后Servlet容器根据URL找到匹配的`DispatcherServlet`。
+1. **请求进入Servlet容器**
+   ：当客户端发起HTTP请求时，请求首先进入Servlet容器（如Tomcat），然后Servlet容器根据URL找到匹配的`DispatcherServlet`。
 
 2. **DispatcherServlet处理请求**：`DispatcherServlet`是Spring MVC的前端控制器，所有请求都经过它的处理。`DispatcherServlet`
    会根据URL映射和HandlerAdapter的选择来决定将请求分派给哪个Controller处理。
 
-3. **HandlerMapping的选择**：`DispatcherServlet`通过`HandlerMapping`来选择合适的Handler(Controller)处理请求。`HandlerMapping`是Spring
-   MVC的接口，可以通过多种方式来配置URL和Handler之间的映射关系，例如`RequestMappingHandlerMapping`、`SimpleUrlHandlerMapping`等。
+3. **HandlerMapping的选择**：`DispatcherServlet`通过`HandlerMapping`来选择合适的Handler(Controller)
+   处理请求。`HandlerMapping`是Spring
+   MVC的接口，可以通过多种方式来配置URL和Handler之间的映射关系，例如`RequestMappingHandlerMapping`、`SimpleUrlHandlerMapping`
+   等。
 
-4. **HandlerAdapter的选择**：`DispatcherServlet`根据请求的处理方式，选择合适的`HandlerAdapter`来处理请求。`HandlerAdapter`是Spring
+4. **HandlerAdapter的选择**：`DispatcherServlet`根据请求的处理方式，选择合适的`HandlerAdapter`来处理请求。`HandlerAdapter`
+   是Spring
    MVC的接口，不同的Handler类型（如基于类的控制器和基于方法的控制器）会有不同的`HandlerAdapter`实现。
 
-5. **参数解析和数据绑定**：一旦选择了合适的Handler(Controller)，`DispatcherServlet`会根据请求的参数和路径变量，通过参数解析器（`HandlerMethodArgumentResolver`
+5. **参数解析和数据绑定**：一旦选择了合适的Handler(Controller)，`DispatcherServlet`
+   会根据请求的参数和路径变量，通过参数解析器（`HandlerMethodArgumentResolver`
    ）将请求数据绑定到Controller的方法参数上。
 
 6. **HandlerInterceptor的执行**：在调用Controller方法之前，`DispatcherServlet`会执行注册的`HandlerInterceptor`
@@ -352,5 +378,6 @@ BeanFactory可以管理各种类型的Bean，而FactoryBean专门用于创建某
 
 10. **返回响应**：`DispatcherServlet`将渲染后的HTML作为响应返回给客户端。
 
-需要注意的是，Spring MVC的整个**处理过程是高度可配置的，你可以通过`@RequestMapping`注解、`HandlerMapping`、`HandlerAdapter`、`HandlerInterceptor`
+需要注意的是，Spring MVC的整个**处理过程是高度可配置的，你可以通过`@RequestMapping`
+注解、`HandlerMapping`、`HandlerAdapter`、`HandlerInterceptor`
 、`ViewResolver`等来定制请求的处理过程，以满足不同的业务需求。这也是Spring MVC被广泛使用的原因之一，因为它提供了灵活的扩展点，可以方便地进行定制和拓展。
