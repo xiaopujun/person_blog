@@ -100,7 +100,7 @@ public class B {
 
 - 一级缓存（singletonObjects）：存放完全实例化后的Bean
 - 二级缓存（earlySingletonObjects）：存放半成品Bean
-- 三级缓存（singletonFactories）：保存单例Bean的创建工厂
+- 三级缓存（singletonFactories）：保存单例Bean的创建工厂，工厂模式可以是一个lambda接口，它给出了自定义创造bean的空间；判断当前bean是否需要代理，然后创建代理对象
 
 #### 解决循环依赖的限制
 
@@ -137,44 +137,17 @@ public class B {
 如果循环依赖的形式是上面这样的，这就有意思了，我们知道创建一个实例对象的时候，构造器是要先执行的，只有构造器执行完毕了，一个对象的内存空间才申请完毕，这个对象才可以使用。同时他才有了内存的地址引用。如果你在
 构造器上注入，那么A创建的时候要求B一定要现有一个内存引用，但是B创建的时候A也是如此。此时的困境在于，他们两个连半成品的自己都造不出来，因此没有继续往下走的能力
 
-
-
-
-> spring bean的生命周期是怎样的？
-
-Spring Bean的生命周期包括以下几个阶段：
-
-实例化：Spring容器根据Bean定义信息创建Bean实例。
-
-属性赋值：Spring容器根据Bean定义信息为Bean实例的属性赋值。
-
-初始化：Spring容器调用Bean的初始化方法（如果有）来完成Bean的初始化。初始化方法可以通过@PostConstruct注解或者在Bean定义中指定。
-
-Bean后置处理器：Spring容器会调用已注册的Bean后置处理器对Bean实例进行后置处理。这一步可以用来对Bean实例进行额外的配置或者代理。
-
-使用：当应用程序需要使用Bean时，Spring容器会将Bean实例提供给应用程序使用。
-
-销毁：当应用程序关闭或者Spring容器关闭时，Spring容器会调用Bean的销毁方法（如果有）来完成Bean的销毁。销毁方法可以通过@PreDestroy注解或者在Bean定义中指定。
-
-以上就是Spring Bean的生命周期。在整个生命周期中，Spring容器负责管理和维护Bean实例，确保它们能够正常工作。
-
-# 二、spring事务的传播机制
+## Spring事务的传播机制
 
 Spring事务传播机制定义了当一个事务方法被另一个事务方法调用时，事务如何在这两个方法之间传播。Spring提供了7种事务传播行为：
 
-PROPAGATION_REQUIRED：如果当前没有事务，就新建一个事务；如果当前存在事务，就加入该事务。这是默认的传播行为。
-
-PROPAGATION_SUPPORTS：如果当前存在事务，就加入该事务；如果当前没有事务，就以非事务方式执行。
-
-PROPAGATION_MANDATORY：如果当前存在事务，就加入该事务；如果当前没有事务，就抛出异常。
-
-PROPAGATION_REQUIRES_NEW：新建一个事务，并暂停当前的事务（如果存在）。
-
-PROPAGATION_NOT_SUPPORTED：以非事务方式执行，并暂停当前的事务（如果存在）。
-
-PROPAGATION_NEVER：以非事务方式执行，如果当前存在事务，就抛出异常。
-
-PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务中执行；如果当前没有事务，就新建一个事务。
+1. **PROPAGATION_REQUIRED**：如果当前没有事务，就新建一个事务；如果当前存在事务，就加入该事务。这是默认的传播行为。
+2. **PROPAGATION_SUPPORTS**：如果当前存在事务，就加入该事务；如果当前没有事务，就以非事务方式执行。
+3. **PROPAGATION_MANDATORY**：如果当前存在事务，就加入该事务；如果当前没有事务，就抛出异常。
+4. **PROPAGATION_REQUIRES_NEW**：新建一个事务，并暂停当前的事务（如果存在）。
+5. **PROPAGATION_NOT_SUPPORTED**：以非事务方式执行，并暂停当前的事务（如果存在）。
+6. **PROPAGATION_NEVER**：以非事务方式执行，如果当前存在事务，就抛出异常。
+7. **PROPAGATION_NESTED**：如果当前存在事务，则在嵌套事务中执行；如果当前没有事务，就新建一个事务。
 
 可以通过在@Transactional注解中指定propagation属性来设置方法的传播行为。例如：
 
@@ -215,6 +188,102 @@ PROPAGATION_NEVER：
 
 如果A方法在事务中执行，那么B方法会在一个嵌套事务中执行。嵌套事务是一个子事务，它可以独立于父事务进行提交或回滚。
 如果A方法不在事务中执行，那么B方法会新建一个事务并在其中执行。 以上就是根据不同的传播行为，A调用B时可能出现的各种情况。
+
+## Spring事务的失效场景
+
+Spring事务依赖于AOP，AOP本质上是动态代理，因此如果代理对象出现问题，就可能会导致事务失效。
+
+#### 类方法中的直接调用
+
+```java 
+@Component
+public class A {
+
+    @Transactional
+    public void test1() {
+        test2();
+    }
+
+    @Transactional
+    public void test2() {
+
+    }
+}
+```
+
+上面的代码中test2方法中的事务不会生效，A中是直接调用的test2方法，本质上是this.test2()。此时的this是纯粹的A对象，而不是代理对象。
+
+#### final、static方法调用
+
+代理对象、代理对象是对象级别的代理。一般JDK动态代理要实现接口要实现复写。final类型的无法进行复写，因此无法支持代理。static更不用说，不是对象级别的方法。无法代理
+
+#### @Transactional参数设置错误
+
+由于@Transactional可以控制事务的传播机制，因此设置不同的参数可以影响事务的实际行为，某些参数会要求方法在非事务环境下执行。
+此外@Transactional(rollbackFor = RuntimeException.class)可以指定方法在什么异常下会导致事务回滚，如果异常类型指定错误，即使抛出异常，事务也不会回滚
+
+#### 使用的@Transactional注解来源错误
+
+并不是只有Spring实现了@Transactional注解，但是Spring体系下应该只有Spring实现的@Transactional注解才能让事务生效。如果使用了其他来源的@Transactional也会导致事务失效
+
+#### 异常在方法内部被处理了
+
+正常情况下，一个处于事务中的方式，如果抛出异常，事务回滚。但是如果抛出的异常被内部消化了，则不会导致事务触发回滚
+
+#### 事务中使用了多线程
+
+Spring中的声明式事务产生的上下文是绑定在ThreadLocal上的，而ThreadLocal是线程隔离的。每个线程都有自己的ThreadLocal。因此多线程环境下声明式事务不会生效。
+但是可以使用编程式事务进行手动控制。
+
+#### 使用的数据库本身就不支持事务
+
+在数据库中，事务是数据库级别的，因此如果数据库本身不支持事务，则事务也无法生效。比如MySql的MyISAM引擎就不支持事务
+
+## Spring Bean的生命周期
+
+Spring Bean的生命周期指的是从Bean的创建、初始化、使用到销毁的整个过程。以下是Spring Bean生命周期的详细步骤：
+
+1. **实例化（Instantiation）**：
+    - Spring容器使用Bean的构造器或静态工厂方法来创建Bean实例。
+
+2. **设置属性值（Populate properties）**：
+    - Spring容器根据配置（XML、注解等）为Bean的属性赋值。这包括字段注入、setter方法注入以及构造器注入。
+
+3. **处理BeanNameAware和BeanFactoryAware**：
+    - 如果Bean实现了`BeanNameAware`接口，Spring容器会调用它的`setBeanName()`方法，传入Bean的ID。
+    - 如果Bean实现了`BeanFactoryAware`接口，Spring容器会调用它的`setBeanFactory()`方法，传入BeanFactory容器实例。
+
+4. **BeanPostProcessor前置处理（BeanPostProcessor pre-processing）**：
+    - 在Bean的初始化方法调用之前，Spring容器会调用所有注册的`BeanPostProcessor`的`postProcessBeforeInitialization()`方法。
+
+5. **初始化（Initialization）**：
+    - 如果Bean实现了`InitializingBean`接口，Spring容器会调用它的`afterPropertiesSet()`方法。
+    - 如果Bean在配置中指定了`init-method`，Spring容器会调用此方法。
+
+6. **BeanPostProcessor后置处理（BeanPostProcessor post-processing）**：
+    - 在Bean初始化完成之后，Spring容器会调用所有注册的`BeanPostProcessor`的`postProcessAfterInitialization()`方法。
+
+7. **使用Bean**：
+    - 此时Bean已经准备好被应用程序使用了，Spring容器会管理这个Bean的生命周期，直到容器关闭。
+
+8. **处理DisposableBean和destroy-method**：
+    - 当Spring容器关闭时，如果Bean实现了`DisposableBean`接口，Spring容器会调用它的`destroy()`方法。
+    - 如果Bean在配置中指定了`destroy-method`，Spring容器也会调用此方法。
+
+9. **销毁Bean（Destruction）**：
+    - 最终，当Spring容器销毁时，Bean的生命周期结束。
+
+### 扩展生命周期的控制
+
+除了上述基本的生命周期步骤，Spring还提供了多种方式来扩展或自定义Bean的生命周期：
+
+- **BeanPostProcessor**：允许你在Bean初始化前后执行自定义逻辑。
+- **BeanFactoryPostProcessor**：允许你在BeanDefinition加载完成后、实例化之前修改BeanDefinition。
+- **自定义初始化和销毁方法**：通过`init-method`和`destroy-method`属性指定自定义的初始化和销毁方法。
+- **@PostConstruct和@PreDestroy注解**：在JSR-250标准中定义的注解，分别用于标记Bean初始化后和销毁前的方法。
+
+通过这些机制，开发者可以灵活地控制和管理Spring Bean的生命周期，以满足不同的业务需求。
+
 
 # 三、BeanFactory和FactroyBean的关系？
 
@@ -1212,7 +1281,7 @@ spring aop功能是spring框架的核心功能之一，他能在不改变源代�
 - 通知：简单理解就是要插入的功能。通知分为5
 
   | 通知类型 | 说明                                                         |
-                                                                                                                                                                        | -------- | ------------------------------------------------------------ |
+                                                                                                                                                                                                                                  | -------- | ------------------------------------------------------------ |
   | 前置通知 | 在目标方法被调用之前调用通知方法                             |
   | 后置通知 | 在目标方法被调用之后调用通知方法                             |
   | 返回通知 | 在目标方法成功执行之后调用通知方法                           |

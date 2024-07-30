@@ -210,3 +210,50 @@ public class CustomBeanPostProcessor implements BeanPostProcessor {
 在这个例子中，BeanPostProcessor接口定义了处理Bean的模板方法，而CustomBeanPostProcessor实现了这些方法来提供具体的处理逻辑。
 
 这种设计允许Spring框架在不修改核心代码的情况下，通过添加新的PostProcessor来扩展其功能，体现了开闭原则。同时，它也提供了一种灵活的机制来干预和自定义Bean的创建和初始化过程。
+
+## SpringBoot中如何让BeanB在BeanA之前被加载
+
+#### 使用依赖关系
+
+```java 
+@Component
+public class A {
+    @Autowired
+    private B b;
+}
+```
+
+在上面的代码中，从依赖关系上看，A依赖于B，因此要完整的加载A，需要先加载B
+
+#### 使用依赖注解@DepensdOn
+
+```java 
+
+@DepensdOn("B")
+@Component
+public class A {
+    @Autowired
+    private B b;
+} 
+
+```
+
+使用@DepensdOn注解，可以指定BeanB在BeanA之前被加载。
+
+#### 使用BeanFactoryPostProcessor
+
+SpringBoot中启动过程中，会先执行BeanDefinition的注册，其次再执行非懒加载单例Bean的初始化。但是再这中间会执行BeanFactoryPostProcessor钩子。因此只要在这个PostProcessor中初始化目标Bean，他一定会在所有其他Bean初始化之前完成初始化
+
+```java 
+
+@Component
+public class PrimaryBeanPostProcessor implements BeanFactoryPostProcessor {
+    
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        PrimaryBean bean = beanFactory.getBean(PrimaryBean.class);//调用getBean方法即可，如果没有被初始化的Bean，他会根据BeanDefinition进行初始化，然后缓存
+        System.out.println(bean);
+    }
+}
+
+```
