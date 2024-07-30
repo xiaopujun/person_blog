@@ -2,113 +2,28 @@
 ./xmind/Spring.xmind
 ```
 
+## Autowired和Resource区别
 
-# 一、spring启动的整个过程
+#### 注入顺序不同
 
+- @Autowired：匹配时类型优先，其次根据名称匹配
+- @Resource：匹配时名称优先，其次根据类型匹配
 
-核心代码位置 org.springframework.context.support.AbstractApplicationContext#refresh
+#### 作用范围
 
-```java
-class AbstractApplicationContext {
-    public void refresh() throws BeansException, IllegalStateException {
-        synchronized (this.startupShutdownMonitor) {
-            //...
-            try {
-                //...
-                // 扫描项目中所有的bean定义
-                invokeBeanFactoryPostProcessors(beanFactory);
-                //...
-                // 实例化所有非懒加载的bean
-                finishBeanFactoryInitialization(beanFactory);
-                //...
-            } catch (BeansException ex) {
-                //...
-            } finally {
-                //...
-            }
-        }
-    }
-}
-```
+- @Autowired：构造器、字段、setter方法, 仅Spring容器内支持
+- @Resource：字段、setter方法,所有IOC容器都应该支持
 
-## 1.1 启动应用：
+#### 默认行为
 
-在Spring应用中，应用的启动一般由应用的入口类完成，例如使用SpringBoot时，可以通过@SpringBootApplication注解标记的类作为入口类。启动应用时，会触发Spring的初始化和上下文创建过程。
+- @Autowired：默认情况下，找不到Bean，则抛出异常。
+- @Resource：默认情况下，找不到Bean，则使用null。
 
-## 1.2. 创建Spring上下文：
+## Spring循环依赖
 
-创建Spring上下文是通过选择适当的ApplicationContext类型来完成的。一般有两种类型的上下文：XML文件配置的上下文和基于注解配置的上下文。
+#### 什么是循环依赖
 
-XML文件配置的上下文：
-如果应用使用XML文件进行配置，可以使用ClassPathXmlApplicationContext或FileSystemXmlApplicationContext等类来创建上下文。通过提供XML配置文件的路径，上下文会读取并解析配置文件，创建相应的Bean定义和容器。
-
-基于注解配置的上下文：
-如果应用使用基于注解的配置方式，通常会使用AnnotationConfigApplicationContext来创建上下文。您可以通过传递配置类（带有@Configuration注解的类）或扫描基础包来指定要扫描的组件和配置信息。
-
-在创建上下文时，还会判断应用是否为Web应用。如果是Web应用，则会初始化Web相关的服务和Servlet。
-
-## 1.3. 创建Bean的扫描器：
-
-在基于注解的配置中，Spring需要一个Bean扫描器来扫描项目中的类，确定哪些类应该被识别为Bean并进行处理。扫描器需要配置以下信息：
-
-包的扫描路径：指定需要扫描的包路径，Spring会在这些路径下寻找带有特定注解的类。
-
-扫描的注解：指定需要扫描的注解，带有这些注解的类会被认为是Bean。
-
-在基于注解的配置中，Spring的扫描器是通过ClassPathBeanDefinitionScanner类来实现的。在创建AnnotationConfigApplicationContext时，会创建一个ClassPathBeanDefinitionScanner实例，并根据配置扫描指定的包路径和注解。对于XML配置的上下文，Bean扫描器是通过XmlBeanDefinitionReader类来实现的。
-
-## 1.4. 创建Bean工厂：
-
-在Spring中，Bean工厂负责管理Bean的创建、依赖注入和生命周期等任务。在上下文创建过程中，会根据上一步中的扫描器信息，创建一个对应的Bean工厂。
-
-对于XML配置的上下文，常用的Bean工厂是DefaultListableBeanFactory。
-
-对于基于注解的上下文，常用的Bean工厂是DefaultListableBeanFactory或AnnotationConfigApplicationContext。
-
-在创建Bean工厂时，还会创建一个BeanPostProcessor列表，用于在Bean实例化过程中执行一些自定义的操作，例如AOP代理、事务管理等。
-
-## 1.5. 扫描项目中的Bean定义：
-
-在上下文创建完成后，根据扫描器的配置，开始扫描项目中定义的Bean。这个过程会扫描指定包路径下的类，并解析类上的注解信息，确定哪些类需要被创建为Bean。
-
-对于XML配置的上下文，会解析XML配置文件中定义的Bean，并将它们转化为Bean定义。
-
-对于基于注解的上下文，会扫描指定包路径下的类，并解析带有特定注解的类，将它们转化为Bean定义。例如@Component、@Service、@Repository等。这些带有注解的类会被认为是Bean，并被转化为Bean定义。
-
-在扫描过程中，解析出的Bean定义将被注册到Bean工厂中。这些定义包含了Bean的相关信息，如名称、类型、依赖关系等。
-在扫描过程中，对于基于注解的配置，还会解析类中的其他注解，例如@Autowired、@Qualifier等，这些注解会影响Bean的依赖注入过程。
-
-扫描bean定义的核心方法：org.springframework.context.support.PostProcessorRegistrationDelegate#invokeBeanDefinitionRegistryPostProcessors
-
-## 1.6. 创建所有非懒加载的单例Bean实例：
-
-在Bean定义阶段完成后，Spring会根据定义创建所有非懒加载的单例Bean实例。这意味着这些Bean会在上下文创建时被实例化，并且在整个应用的生命周期中只有一个实例。
-
-对于XML配置的上下文，会根据XML配置文件中的Bean定义，使用反射机制实例化Bean对象。
-
-对于基于注解的上下文，会根据扫描到的带有特定注解的类，使用反射机制实例化Bean对象。
-
-在实例化Bean时，如果Bean存在依赖关系，则会先实例化依赖的Bean，并将其注入到目标Bean中。
-
-在创建Bean实例时，如果Bean实现了FactoryBean接口，那么会调用FactoryBean的getObject()
-方法来创建Bean实例。另外，在实例化Bean时，还会处理Bean的循环依赖问题，例如A依赖B，B依赖A。
-
-## 1.7. 执行Bean的初始化方法：
-
-在实例化Bean之后，Spring会执行Bean的初始化方法。这些方法可以使用注解@PostConstruct标注或实现InitializingBean接口的afterPropertiesSet()
-方法。在初始化方法中，您可以执行一些自定义的逻辑，例如初始化资源、建立连接等。
-
-在执行Bean的初始化方法之前，还会执行BeanPostProcessor的postProcessBeforeInitialization()
-方法，这些方法可以对Bean实例进行一些预处理操作。在执行初始化方法之后，还会执行BeanPostProcessor的postProcessAfterInitialization()
-方法，这些方法可以对Bean实例进行一些后处理操作。
-
-## 1.8. 完成Spring上下文的创建：
-
-完成所有非懒加载单例Bean的实例化和初始化后，Spring上下文的创建过程就完成了。此时，您可以通过上下文获取和使用Bean实例。在上下文创建完成后，还会触发一些事件，例如ContextRefreshedEvent。您可以通过实现ApplicationListener接口并监听相应的事件来执行一些自定义的操作。
-
-AbstractAutowireCapableBeanFactory.java:进行实例的初始化，包括依赖注入，初始化方法调用等
-
-# 问题解答
+如下代码所示，A和B都是都标注了@Component注解，因此他们都是Spring组件，并且A依赖B，B依赖A，他们相互依赖。相互依赖导致的问题是，当创建A实例的时候他引用了B，因此要创建B。但同时创建B时候发现引用了A。因此他需要创建A。如此反复，形成了死循环
 
 ```java
 
@@ -117,8 +32,8 @@ public class A {
     @Autowired
     private B b;
 
-    public void print() {
-        System.out.println("A");
+    public void setB(B b) {
+        this.b = b;
     }
 }
 
@@ -127,118 +42,102 @@ public class B {
     @Autowired
     private A a;
 
-    public void print() {
-        System.out.println("B");
-        a.print();
+    public void setA(A a) {
+        this.a = a;
     }
 }
+
 ```
 
-> 这是我定义的两个bean， spring是如何将他们实例化的？依赖注入的步骤是怎么样的？
+#### 如何解决循环依赖
 
-在您提供的代码中，A和B类都使用了@Component注解，这意味着它们都会被Spring框架扫描并注册为bean。此外，两个类都使用了@Autowired注解来注入对方的实例。
+介绍三级缓存需要先了解我们通常创建Java对象的过程。
 
-当Spring容器启动时，它会读取配置元数据并扫描应用程序中的所有类。当它发现带有@Component注解的类时，它会将这些类注册为bean。在这个过程中，Spring容器会创建一个BeanDefinition对象来存储有关bean的信息。
+```java 
+public static void main(String[] args) {
+        A a = new A();
+        B b = new B();
+        a.setB(b);
+        b.setA(a);
+    }
+```
 
-接下来，当您第一次调用getBean()
-方法或者当ApplicationContext启动时，IoC容器会触发依赖注入并将bean实例放入缓存中。在这个过程中，Spring容器会实例化bean并根据配置元数据进行依赖注入。
+你会发现实例化一个对象的过程差不多分为两步，创建一个对象，给对象属性赋值。在Spring实例化的过程中，这2步加在一起完成算作实例化Bean完成。因此解决循环依赖的时候可以使用这个思路。假设现在要实例化A
 
-在您提供的代码中，当Spring容器实例化A类时，它会发现A类依赖于B类。因此，它会先实例化B类，并将其注入到A类中。同样，当Spring容器实例化B类时，它会发现B类依赖于A类。因此，它会先实例化A类，并将其注入到B类中。
+1. 首先创建A实例，使用反射也好，new关键字也罢，先给他申请一块内存空间，把空对象先创建出来，
+2. 此时发现他依赖于B，按照相同的方式去实例化B，然后发现B又依赖于A。又去实例化A，似乎陷入了死循环中。
+3. 但其实我们第一步已经创建A对象了，只是还没有给他的字段属性赋值。因此如果有一个办法，将没有完全创建好的A对象先存起来，在实例化B要注入A的时候把这个提前存好的A先注入进去。B就可以完整的实例化。
+4. 最后B已经是一个完整实例化好的对象，再把之前的半成品A拿出来设置好其中的b属性，这样A和B就都完整了。
 
-总之，在您提供的代码中，Spring容器会扫描应用程序中的所有类，并将带有@Component注解的类注册为bean。当您第一次调用getBean()
-方法或者当ApplicationContext启动时，IoC容器会触发依赖注入并将bean实例放入缓存中。在这个过程中，Spring容器会根据配置元数据进行依赖注入。
+这其中涉及到了A的半成品，他提前存了起来。这个存放他的地方就是缓存。（本质是一个Map容器而已）
 
+##### 看似只需要一层缓存就行了，为什么是三级缓存？
 
-> 这个过程中a依赖于B，他想先实例化B。但是必要依赖于a。他要先实例化a。这样就会有一个循环依赖的问题。 Spring是如何解决的？
+孩子，你本身创建出来的这些单例Bean是不是就需要缓存？
+不然难道每次都重新创建嘛？那就不叫单例Bean了。因此就算没有循环依赖，创建出来的Bean也需要缓存一份。而确实，二级缓存就可以解决循环依赖的问题。
+但是还有一些特殊型情况。如下代码，加入A依赖的不是纯正的B对象，而是B对象的代理对象，又当如何？为了注入b的代理对象，需要先创建b对象，然后创建b的代理对象，最终注入到A的proxyb属性中。
+你会说，这用二级缓存不也行嘛？只不过A、B的依赖之间加了一个代理对象。没错，也可以解决。那么为什么不使用二级缓存呢？原因在于Spring的AOP代理。在Spring中，一个Bean可能会被AOP框架代理。
+在创建代理对象时，需要获取到完全初始化后的Bean。然而，如果我们只使用二级缓存，那么在Bean初始化的早期阶段，我们无法获取到需要被代理的完全初始化后的Bean。
+因此，Spring引入了第三级缓存。第三级缓存存储的是创建Bean的工厂对象，这个工厂对象能够在Bean完全初始化之前返回Bean的引用。这样，即使Bean还没有完全初始化，AOP框架也可以创建对应的代理对象。
 
-您提到的问题被称为循环依赖。Spring框架可以处理单例作用域的bean之间的循环依赖，但不能处理原型作用域的bean之间的循环依赖。
-
-当Spring容器检测到单例作用域的bean之间存在循环依赖时，它会使用一种称为三级缓存的技术来解决这个问题。具体来说，Spring容器会在实例化bean之后、初始化bean之前将bean的引用存储在一个缓存中。当另一个bean需要注入这个bean时，Spring容器会从缓存中获取这个bean的引用并注入它。
-
-在您提供的代码中，当Spring容器实例化A类时，它会发现A类依赖于B类。因此，它会先实例化B类，并将其引用存储在缓存中。然后，它会继续实例化A类，并将B类的引用注入到A类中。同样，当Spring容器实例化B类时，它会发现B类依赖于A类。因此，它会先实例化A类，并将其引用存储在缓存中。然后，它会继续实例化B类，并将A类的引用注入到B类中。
-
-> “实例化bean之后、初始化bean之前”。这个操作具体指的是什么？以A为例子，是他创建了A的对象，但是没有初始化b这个属性，是这个意思吗？
-
-是的，您的理解是正确的。在Spring框架中，实例化bean指的是创建bean的实例，但不包括初始化bean。初始化bean指的是在实例化bean之后、使用bean之前对bean进行配置和设置。
-
-
-> 三级缓存是那三级？三级缓存如何在解决循环依赖的时候发挥作用?
-
-在Spring框架中，三级缓存指的是singletonObjects、earlySingletonObjects和singletonFactories这三个缓存。它们都是在DefaultSingletonBeanRegistry类中定义的。
-
-singletonObjects：这是一个用于存储完全初始化的单例bean的缓存。当一个单例bean被完全初始化后，它会被存储在这个缓存中。
-earlySingletonObjects：这是一个用于存储早期的单例bean的缓存。当一个单例bean被实例化但尚未完全初始化时，它会被存储在这个缓存中。
-singletonFactories：这是一个用于存储单例bean工厂的缓存。当一个单例bean被实例化但尚未完全初始化时，它对应的工厂会被存储在这个缓存中。
-当Spring容器检测到循环依赖时，它会使用三级缓存来解决这个问题。具体来说，当Spring容器实例化一个单例bean但尚未完全初始化它时，它会将这个bean的工厂存储在singletonFactories缓存中。然后，当另一个bean需要注入这个bean时，Spring容器会从singletonFactories缓存中获取这个bean的工厂，并使用它来创建一个早期的bean实例。接着，Spring容器会将这个早期的bean实例存储在earlySingletonObjects缓存中，并将其注入到另一个bean中。
-
-
-> “但是，Spring解决循环依赖是有一定限制的，首先就是要求互相依赖的Bean必须要是单例的Bean，另外就是依赖注入的方式不能都是构造函数注入的方式。”
-> 为什么无法解决都是构造函数注入的方式的循环依赖？
-
-当两个Bean都是通过构造函数注入对方时，Spring无法解决循环依赖问题。这是因为在构造函数注入时，Bean的实例化必须在构造函数执行完成后才能完成。如果两个Bean都是通过构造函数注入对方，那么它们都需要等待对方的实例化完成才能完成自己的实例化，从而导致循环依赖的问题1。
-
-相比之下，当使用属性或setter方法注入时，Bean的实例化可以在注入之前完成，因此Spring可以通过三级缓存机制来解决循环依赖问题。具体来说，Spring会先创建一个不完整的Bean实例并将其放入缓存中，然后在注入时从缓存中获取该Bean实例并完成注入1。
-
-
-> 请你基于上面的两个bean Java类。将spring使用三级缓存解决两个Bean实例之间循环依赖的整个过程按步骤一步一步分析说明下
-
-```java
+```java 
 
 @Component
 public class A {
     @Autowired
-    private B b;
-
-    public void print() {
-        System.out.println("A");
-    }
+    private B proxyb;
 }
 
 @Component
 public class B {
     @Autowired
     private A a;
-
-    public void print() {
-        System.out.println("B");
-        a.print();
-    }
 }
+
 ```
 
-当Spring容器启动时，它会扫描并实例化所有的Bean。在这个过程中，Spring会使用三级缓存来解决循环依赖的问题。下面是Spring使用三级缓存解决上述两个Bean之间循环依赖的整个过程：
+三级缓存如下：
 
-1. 假设Spring容器首先实例化Bean A。在实例化Bean A之前，Spring会将其添加到singletonsCurrentlyInCreation集合中，表示该Bean正在创建中。
+- 一级缓存（singletonObjects）：存放完全实例化后的Bean
+- 二级缓存（earlySingletonObjects）：存放半成品Bean
+- 三级缓存（singletonFactories）：保存单例Bean的创建工厂
 
-2.在实例化Bean A时，Spring会发现它依赖于Bean B。因此，Spring会尝试实例化Bean B。
+#### 解决循环依赖的限制
 
-3. 在实例化Bean B之前，Spring会将其添加到singletonsCurrentlyInCreation集合中。
+##### 为什么只支持单例作用域的bean之间的循环依赖
 
-4. 在实例化Bean B时，Spring会发现它依赖于Bean A。由于Bean A已经在singletonsCurrentlyInCreation集合中，因此Spring知道存在循环依赖。
+单例说明全局只有一个对象，比如A对象，那么整个应用的声明周期理论上只有一个A对象，因此创建出来的半成品A是可以缓存的。我从缓存里拿到的一直都是这个全局的，之后使用的也是这个全局的A对象。
+如果是非单例的，那每次使用都是创建新的A对象。缓存起来有何意义？你缓存起来我也不会用它，我需要完全重新创建一个A，这就又卡死了，因为A的创建又需要一个全新的B。
+这是通常的说法，我觉得倒也未必，如果每次都暂时缓存一下这个新创建的A对象，等这次循环依赖解决后立移除缓存中的半成品，应该也能解决。但可能Spring框架太庞大，这种方式可能对其他地方造成影响，所以只支持了单例
 
-5. 此时，Spring会尝试通过三级缓存来解决循环依赖的问题。首先，它会检查一级缓存singletonObjects中是否存在Bean A的实例。由于Bean
-   A还没有被完全实例化，因此一级缓存中不会存在Bean A的实例。
+##### 为什么解决不了构造器注入的循环依赖
 
-6. 接下来，Spring会检查二级缓存earlySingletonObjects中是否存在Bean A的实例。由于这是第一次检查二级缓存，因此二级缓存中也不会存在Bean
-   A的实例。
+```java 
+@Component
+public class A {
+    private B b;
 
-7. 然后，Spring会检查三级缓存singletonFactories中是否存在一个可以创建Bean A实例的工厂对象。由于这是第一次检查三级缓存，因此三级缓存中也不会存在可以创建Bean
-   A实例的工厂对象。
+    @Autowired
+    public A(B b) {
 
-8. 由于三级缓存中不存在可以创建Bean A实例的工厂对象，因此Spring会创建一个不完整的Bean
-   A实例（即只调用了构造函数但还没有完成依赖注入），并将一个可以返回该不完整实例的工厂对象添加到三级缓存中。
+    }
+}
+@Component
+public class B {
+    private A a;
 
-9. 接下来，Spring会继续实例化Bean B。在完成依赖注入时，它会再次检查三级缓存，并发现可以创建Bean
-   A实例的工厂对象。因此，它会使用该工厂对象获取到不完整的Bean A实例，并完成对Bean B的依赖注入。
+    @Autowired
+    public B(A a) {
+        this.a = a;
+    }
+}
 
-10.在完成对Bean B的依赖注入后，Spring会将完整的Bean B实例添加到一级缓存中，并从singletonsCurrentlyInCreation集合中移除。
+```
 
-11. 接下来，Spring会继续完成对Bean A的依赖注入。在完成依赖注入时，它会从一级缓存中获取到完整的Bean B实例，并完成对Bean
-    A的依赖注入。
+如果循环依赖的形式是上面这样的，这就有意思了，我们知道创建一个实例对象的时候，构造器是要先执行的，只有构造器执行完毕了，一个对象的内存空间才申请完毕，这个对象才可以使用。同时他才有了内存的地址引用。如果你在
+构造器上注入，那么A创建的时候要求B一定要现有一个内存引用，但是B创建的时候A也是如此。此时的困境在于，他们两个连半成品的自己都造不出来，因此没有继续往下走的能力
 
-12. 在完成对Bean A的依赖注入后，Spring会将完整的Bean A实例添加到一级缓存中，并从singletonsCurrentlyInCreation集合中移除。
 
-通过上述步骤，Spring成功地使用三级缓存解决了两个Bean之间循环依赖的问题。
 
 
 > spring bean的生命周期是怎样的？
@@ -1313,7 +1212,7 @@ spring aop功能是spring框架的核心功能之一，他能在不改变源代�
 - 通知：简单理解就是要插入的功能。通知分为5
 
   | 通知类型 | 说明                                                         |
-    | -------- | ------------------------------------------------------------ |
+                                                                                                                                                                        | -------- | ------------------------------------------------------------ |
   | 前置通知 | 在目标方法被调用之前调用通知方法                             |
   | 后置通知 | 在目标方法被调用之后调用通知方法                             |
   | 返回通知 | 在目标方法成功执行之后调用通知方法                           |
