@@ -17,6 +17,10 @@
         .xmind_preview iframe {
             height: 600px !important;
         }
+
+        .table-wrapper table td:before {
+            content: '' !important;
+        }
     </style>
 </head>
 <body>
@@ -30,6 +34,10 @@
         onlyCover: true,
         subMaxLevel: 3,
         homePage: 'README.md',
+        markdown: {
+            headerIds: false,
+            headerPrefix: undefined
+        },
         count: {
             countable: true,
             position: 'top',

@@ -69,3 +69,43 @@ age < 10。在这种情况下，MySQL 会锁定所有 age 大于 5 且小于 10
 的索引记录以及索引记录之间的间隙。
 
 总之，MySQL 的 Next-Key Locks 锁定范围的依据是查询条件。它会根据查询条件来确定锁定范围，从而避免幻读问题。
+
+## MVCC ReadView的判断过程
+
+在MySQL的MVCC（Multi-Version Concurrency
+Control，多版本并发控制）机制中，ReadView用于在一个事务的生命周期内维护数据一致性，确保事务只能看到它开始时的数据快照，而不会被其他并发事务的更改所影响。这个机制广泛应用于InnoDB存储引擎。
+
+### ReadView的组成部分
+
+一个ReadView由以下几个重要部分组成：
+
+1. **`m_ids`**：表示在创建ReadView时系统中所有活动的事务ID。
+2. **`min_trx_id`**：`m_ids`中的最小事务ID。
+3. **`max_trx_id`**：当前系统中将要分配给下一个事务的ID。
+4. **`creator_trx_id`**：当前创建ReadView的事务ID。
+
+### 数据可见性判断的依据
+
+在使用MVCC读取数据时，InnoDB会创建一个ReadView，并基于这个ReadView判断数据的可见性。判断依据如下：
+
+1. **未提交的数据**：如果数据的事务ID（`trx_id`）等于当前事务的ID（`creator_trx_id`），则可见。
+2. **已提交的数据**：如果数据的事务ID小于`min_trx_id`，则可见。
+3. **未决事务的数据**：
+    - 如果数据的事务ID大于或等于`max_trx_id`，则不可见。
+    - 如果数据的事务ID在`m_ids`中，则不可见。
+    - 否则，可见。
+
+> 如果数据的事务ID大于或等于max_trx_id，则不可见。” 其中 “事务ID大于或等于max_trx_id"说明了什么？
+
+在MySQL的MVCC机制中，“事务ID大于或等于`max_trx_id`” 这一判断主要是为了确保当前事务不能看到在它之后启动的其他事务所做的更改。具体解释如下：
+
+### 事务ID和max_trx_id的含义
+
+- **事务ID（transaction ID，`trx_id`）**：每个事务在开始时都会分配一个唯一的事务ID。这个ID是递增的，意味着后启动的事务会有更大的事务ID。
+- **`max_trx_id`**：这个值表示在创建ReadView时系统中将要分配给下一个事务的ID。换句话说，所有大于或等于`max_trx_id`
+  的事务ID都是在当前事务创建ReadView之后才启动的。
+
+### 解释“事务ID大于或等于max_trx_id”
+
+当一个事务创建ReadView时，它希望看到的是当前时刻的数据库状态，而不包括之后的事务对数据库的更改。因此，对于任何大于或等于`max_trx_id`
+的事务ID，表示这些事务是在当前事务创建ReadView之后启动的，当前事务不应该看到它们所做的更改。

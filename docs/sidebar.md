@@ -19,11 +19,10 @@
         * IO
         * [反射](后端/java/反射/反射机制.md)
         * [动态代理](后端/java/动态代理/JDK动态代理.md)
-        * [多线程](后端/java/多线程/java多线程.md)
-        * [多线程(新)](后端/java/多线程/Java多线程（新）.md)
+        * [多线程](后端/java/多线程/Java多线程.md)
         * [泛型](后端/java/泛型/Java泛型.md)
         * 虚拟机
-        * 集合
+        * [集合](后端/java/集合/容器.md)
         * Lambda表达式
     * 框架
         * [SpringBoot](后端/spring-boot/springBoot.md)
@@ -37,15 +36,15 @@
         * [SQL优化](数据库/MySQL/SQL优化/SQL优化.md)
         * [MVCC](数据库/MySQL/MVCC/MySQL的MVCC.md)
         * 存储引擎
-        * 索引
+        * [索引](数据库/MySQL/索引/MySql索引.md)
         * 链接查询
         * [锁](数据库/MySQL/锁/锁.md)
         * 高性能
-    * Redis
-        * 数据类型
-        * 发布与订阅
-        * 持久化
-        * 配置文件
+    * [Redis](数据库/Redis/Redis.md)
+        * [数据类型](数据库/Redis/数据类型/Redis数据类型.md)
+        * [发布与订阅](数据库/Redis/发布和订阅/Redis的发布和订阅.md)
+        * [持久化](数据库/Redis/持久化/Redis持久化.md)
+        * [配置文件](数据库/Redis/配置文件/Redis配置文件.md)
 * 版本控制
     * [Git](版本控制/git.md)
 * 设计模式
@@ -60,7 +59,8 @@
     * 计算机组成原理
     * 计算机网络
 * 运维
-    * Docker
+    * [Docker](运维/Docker.md)
+    * [Linux-Ubuntu](运维/Linux-Ubuntu.md)
 * 错误经验
 * 项目经验
     * [LIGHT CHASER](项目经验/LIGHT-CHASER.md)

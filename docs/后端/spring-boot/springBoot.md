@@ -71,7 +71,6 @@ prepareContext(bootstrapContext, context, environment, listeners, applicationArg
 #### 预刷新
 
 - 处理配置文件和上下文环境中的占位符
--
 
 #### 加载`BeanDefinition`
 
@@ -242,7 +241,7 @@ public class A {
 
 #### 使用BeanFactoryPostProcessor
 
-SpringBoot中启动过程中，会先执行BeanDefinition的注册，其次再执行非懒加载单例Bean的初始化。但是再这中间会执行BeanFactoryPostProcessor钩子。因此只要在这个PostProcessor中初始化目标Bean，他一定会在所有其他Bean初始化之前完成初始化
+SpringBoot中启动过程中，会先执行BeanDefinition的注册，其次再执行非懒加载单例Bean的初始化。但是在这中间会执行BeanFactoryPostProcessor钩子。因此只要在这个PostProcessor中初始化目标Bean，他一定会在所有其他Bean初始化之前完成初始化
 
 ```java 
 
@@ -257,3 +256,172 @@ public class PrimaryBeanPostProcessor implements BeanFactoryPostProcessor {
 }
 
 ```
+
+## SpringBoot执行定时任务
+
+#### 启动类上添加注解@EnableScheduling
+
+```java
+@SpringBootApplication
+@EnableScheduling
+public class Application {
+      public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+#### 定时任务类交给Spring管理
+
+```java
+
+@Component
+public class DelDataScheduleTask {
+    @Scheduled(cron = "0 0 13 * * ?")
+    public void executeTask() {
+        System.out.println("每天下午1点执行任务");
+        // 在这里添加你的任务逻辑
+    }
+}
+
+```
+
+#### 请详细解释cron表达式的每一个元素都有什么作用
+
+Cron表达式是一种用于指定计划任务执行时间的字符串，由多个字段组成，每个字段代表不同的时间单位。以下是每个字段的详细解释：
+
+### Cron表达式的基本结构
+
+一个标准的Cron表达式通常由六个字段组成，按顺序分别表示：
+
+```
+秒 分 时 日 月 星期 [年]
+```
+
+其中，年字段是可选的。每个字段之间用空格分隔。
+
+### 字段详解
+
+1. **秒（Seconds）**：取值范围为0-59。
+    - 示例：`0` 表示每分钟的第0秒执行。
+
+2. **分（Minutes）**：取值范围为0-59。
+    - 示例：`0` 表示每小时的第0分钟执行。
+
+3. **时（Hours）**：取值范围为0-23。
+    - 示例：`13` 表示下午1点执行。
+
+4. **日（Day of Month）**：取值范围为1-31。
+    - 示例：`15` 表示每月15日执行。
+
+5. **月（Month）**：取值范围为1-12，或使用缩写（JAN-DEC）。
+    - 示例：`7` 或 `JUL` 表示七月执行。
+
+6. **星期（Day of Week）**：取值范围为0-7（0和7都表示星期日），或使用缩写（SUN-SAT）。
+    - 示例：`1` 或 `MON` 表示星期一执行。
+
+7. **年（Year）**：取值范围为1970-2099（可选）。
+    - 示例：`2024` 表示在2024年执行。
+
+### 特殊字符
+
+- **`*`（星号）**：表示匹配该字段的所有值。
+    - 示例：`* * * * *` 表示每分钟执行一次。
+
+- **`?`（问号）**：只能用于“日”和“星期”字段，表示不指定具体的值。
+    - 示例：`0 0 12 * * ?` 表示每天中午12点执行，不关心具体是星期几。
+
+- **`-`（连字符）**：表示一个范围。
+    - 示例：`10-12` 表示从10到12点之间每小时执行一次。
+
+- **`,`（逗号）**：表示列出多个值。
+    - 示例：`MON,WED,FRI` 表示星期一、三、五执行。
+
+- **`/`（斜杠）**：表示指定增量。
+    - 示例：`0/15` 表示从0分钟开始，每15分钟执行一次。
+
+- **`L`（最后）**：只能用于“日”和“星期”字段，表示最后一天或最后一个星期几。
+    - 示例：`L` 表示每月的最后一天。
+
+- **`W`（工作日）**：只能用于“日”字段，表示最近的工作日。
+    - 示例：`15W` 表示每月15日最近的工作日执行。
+
+- **`#`（第几个星期几）**：只能用于“星期”字段，表示某月的第几个星期几。
+    - 示例：`2#1` 表示每月的第一个星期二。
+
+### 示例
+
+- `0 0 12 * * ?`：每天中午12点执行。
+- `0 15 10 ? * MON-FRI`：每周一到周五上午10:15执行。
+- `0 0 0 1 1 ?`：每年1月1日午夜执行。
+
+通过理解这些字段和特殊字符，你可以灵活地编写Cron表达式来满足各种定时任务的需求
+
+## SpringBoot定时任务与数据库事务结合导致的依赖注入失败问题
+
+正常情况下，当我们的Controller中使用了类似Aop功能，那么实际在使用Controller实例时，是通过生成的代理对象来调用的。大致的过程是，Tomcat容器启动一个线程，通过反射调用代理对象的方法，代理对象再调用原始对象的方法。
+
+考虑这样一个场景：
+
+```java
+@Log4j2
+@Component
+public class DelDataScheduleTask {
+
+    @Resource
+    private FileService fileService;
+    
+
+    /**
+     * 定时任务
+     */
+    @Scheduled(cron = "0 0 0 ? * SUN")
+    @Transactional
+    public void executeTask() {
+        // 删除过期的图片资源
+        deleteImageFile();
+    }
+    
+    private void deleteImageFile() {
+        List<FilePO> expiredData = fileService.getExpiredData();
+        if (expiredData == null || expiredData.isEmpty())
+            return;
+        List<String> urls = expiredData.stream().map(FilePO::getUrl).map(url -> GlobalVariables.PROJECT_RESOURCE_PATH + GlobalVariables.SOURCE_IMAGE_PATH + url).toList();
+        deletePhysicalFile(urls);
+    }
+
+}
+
+```
+
+如上的代码中，定时任务本身是一个通过@Transactional标注的存在事务的方法，因此调用时，应该时通过代理对象来调用这个异步任务的。同时该Bean中存在一个fileService的依赖。这个依赖本身也是一个Bean，且它内部的方法也会使用到事务。此时当定时任务启动时，实际使用的fileService对象也是一个代理对象。
+当你真正使用代理对象调用到fileService内部的方法时，可能会出现fileService内部字段没有被依赖注入
+
+```java
+
+@Service
+public class FileServiceImpl implements FileService {
+
+    @Resource
+    private FileMapper fileMapper;
+}
+```
+
+比如你会发现fileService内部的这个fileMapper字段是null，因此在执行fileService内部方法的时候会出现空指针异常。经过一些测试，发现如果fileService中没有使用事务注解@Transactional，那么这个问题就不会出现了。据此猜测，我认为应该是在实例化异步任务类的时候，依赖注入没有完整的完成。导致创建出来的代理对象是不完整的。
+
+通过调试一个普通的Controller请求会发现，正常的请求路径是先走早Controller的代理对象，代理对象再调用原始对象的方法。而原始对象的依赖注入是没有问题的。
+上面的空指针异常发生在直接使用了代理对象的方法，并没有通过代理对象调用到原始对象的方法中去。而为了让这个异步任务实例的依赖注入完整。我使用了`@DependsOn({"fileServiceImpl"})`
+注解。要求在实例化异步任务类的时候，必须吧它依赖的其他service实例完整的创建出来。也就是先实例化A再实例化B。保持这个顺序。
+
+```java 
+@DependsOn({"fileServiceImpl"})
+@Log4j2
+@Component
+public class DelDataScheduleTask {
+
+    @Resource
+    private FileService fileService;
+}
+```
+
+之后该为题得到了解决。 这大概验证了上面我的猜测，但是最直接的依赖注入问题现象没有办法直接观察到。只知道不使用此方法，异步任务中的依赖注入确实存在问题
