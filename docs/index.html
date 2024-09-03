@@ -21,6 +21,20 @@
         .table-wrapper table td:before {
             content: '' !important;
         }
+
+        .sidebar ul, .sidebar ul li {
+            margin-left: 10px;
+        }
+
+        .sidebar-nav ul:not(.app-sub-sidebar) > li:not(.file)::before {
+            border-right: 2px solid #505d6b;
+            border-bottom: 2px solid #505d6b;
+            left: -20px;
+        }
+
+        .sidebar .sidebar-nav {
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -34,6 +48,10 @@
         onlyCover: true,
         subMaxLevel: 3,
         homePage: 'README.md',
+        name: '大古学习笔记',
+        alias: {
+            '/.*/sidebar.md': '/sidebar.md'
+        },
         markdown: {
             headerIds: false,
             headerPrefix: undefined
@@ -64,7 +82,11 @@
             // 避免搜索索引冲突
             // 同一域下的多个网站之间
             namespace: 'website-1',
-        }
+        },
+        timeUpdater: {
+            text: "<div style='width:100%;color:#6cb5ff;font-size:18px;text-align: center'>—————— 最后更新时间:&emsp;{docsify-updated} ——————</div>",
+            formatUpdated: "{YYYY} 年 {MM} 月 {DD} 日",
+        },
     }
 </script>
 <!-- Docsify v4 -->
@@ -78,6 +100,7 @@
 <script src="resource/js/docsify-sidebar-collapse.min.js"></script>
 <script src="resource/js/docsify-darklight-theme.js"></script>
 <script src="resource/js/docsify-xmind.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify-updated/src/time-updater.min.js"></script>
 
 <script src="//cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-java.min.js"></script>

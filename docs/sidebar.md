@@ -15,14 +15,14 @@
         * [React-Router](前端/React-router.md)
 * 后端
     * Java
-        * 基础
-        * IO
+        * [基础](后端/java/基础语法/Java.md)
+        * [IO](后端/java/IO/JavaIO.md)
         * [反射](后端/java/反射/反射机制.md)
         * [动态代理](后端/java/动态代理/JDK动态代理.md)
         * [多线程](后端/java/多线程/Java多线程.md)
         * [泛型](后端/java/泛型/Java泛型.md)
         * 虚拟机
-        * [集合](后端/java/集合/容器.md)
+        * [容器](后端/java/容器/Java容器)
         * Lambda表达式
     * 框架
         * [SpringBoot](后端/spring-boot/springBoot.md)
@@ -66,5 +66,6 @@
     * [LIGHT CHASER](项目经验/LIGHT-CHASER.md)
     * [LIGHT CHASER SERVER](项目经验/LIGHT-CHASER-SERVER.md)
 * [面试](面试/面试复盘.md)
+* [问题排查](问题记录/问题记录.md)
 * 其他
     * JS常用代码
